@@ -20,9 +20,11 @@ Three isolated PostgreSQL servers run via Docker Compose, one per environment:
 
 | Environment | Docker Container | Port  | Purpose                          |
 |-------------|-----------------|-------|----------------------------------|
-| `dev`       | `pg_dev`        | 5432  | Active development, personal sandbox |
-| `qa`        | `pg_qa`         | 5433  | Integration testing, pre-release validation |
-| `prod`      | `pg_prod`       | 5434  | Production data, clean schema names |
+| `dev`       | `pg_dev`        | 5441  | Active development, personal sandbox |
+| `qa`        | `pg_qa`         | 5442  | Integration testing, pre-release validation |
+| `prod`      | `pg_prod`       | 5443  | Production data, clean schema names |
+
+> **Note:** Ports 5441–5443 are used to avoid conflict with a local PostgreSQL 18 installation on port 5432.
 
 Schema naming behavior (controlled by `macros/generate_schema_name.sql`):
 
@@ -52,6 +54,20 @@ feature/xyz  ──►  develop  ──►  main
 3. Open a PR into `develop` — GitHub Actions runs `dbt build` against **qa**
 4. After QA passes, open a PR from `develop` into `main` — GitHub Actions runs `dbt build` against **prod**
 5. Direct commits to `main` are not permitted
+
+---
+
+## Current Build Status
+
+| Component | Status |
+|-----------|--------|
+| Project scaffold (seeds, staging, facts, dimensions) | ✅ Complete |
+| Git repo with `main` / `develop` branch strategy | ✅ Complete |
+| Docker Compose — 3 isolated PostgreSQL 15 servers | ✅ Complete |
+| dbt profiles for dev / qa / prod | ✅ Complete |
+| `dbt debug` passing on all 3 targets | ✅ Complete |
+| GitHub Actions CI/CD workflows | 🔜 In progress |
+| Remaining dimension models (dim_customers, dim_products, dim_stores) | 🔜 Pending |
 
 ---
 
