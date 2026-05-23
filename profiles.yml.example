@@ -1,0 +1,33 @@
+dbt_retail_pipeline:
+  target: dev
+  outputs:
+
+    dev:
+      type: postgres
+      host: localhost
+      port: 5441
+      user: dbt_user
+      password: "{{ env_var('DEV_DB_PASSWORD') }}"
+      dbname: retail_dev
+      schema: "{{ env_var('DBT_USER') }}"
+      threads: 4
+
+    qa:
+      type: postgres
+      host: localhost
+      port: 5442
+      user: dbt_user
+      password: "{{ env_var('QA_DB_PASSWORD') }}"
+      dbname: retail_qa
+      schema: retail
+      threads: 4
+
+    prod:
+      type: postgres
+      host: localhost
+      port: 5443
+      user: dbt_user
+      password: "{{ env_var('PROD_DB_PASSWORD') }}"
+      dbname: retail_prod
+      schema: retail
+      threads: 4
