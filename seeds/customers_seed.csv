@@ -1,0 +1,21 @@
+customer_id,first_name,last_name,email,phone,city,state,country,signup_date,customer_segment
+1,Alice,Johnson,alice.johnson@email.com,555-100-0001,New York,NY,USA,2022-01-15,Premium
+2,Bob,Smith,bob.smith@email.com,555-100-0002,Los Angeles,CA,USA,2022-03-20,Standard
+3,Carol,Williams,carol.w@email.com,555-100-0003,Chicago,IL,USA,2021-11-05,Premium
+4,David,Brown,david.b@email.com,555-100-0004,Houston,TX,USA,2023-02-10,Budget
+5,Emma,Jones,emma.j@email.com,555-100-0005,Phoenix,AZ,USA,2022-07-14,Standard
+6,Frank,Davis,frank.d@email.com,555-100-0006,Philadelphia,PA,USA,2021-09-01,Premium
+7,Grace,Miller,grace.m@email.com,555-100-0007,San Antonio,TX,USA,2023-05-22,Budget
+8,Henry,Wilson,henry.w@email.com,555-100-0008,San Diego,CA,USA,2022-12-03,Standard
+9,Iris,Moore,iris.m@email.com,555-100-0009,Dallas,TX,USA,2023-01-18,Premium
+10,Jack,Taylor,jack.t@email.com,555-100-0010,San Jose,CA,USA,2022-04-07,Standard
+11,Karen,Anderson,karen.a@email.com,555-100-0011,Austin,TX,USA,2021-06-30,Budget
+12,Leo,Thomas,leo.t@email.com,555-100-0012,Jacksonville,FL,USA,2023-08-15,Premium
+13,Mia,Jackson,mia.j@email.com,555-100-0013,Fort Worth,TX,USA,2022-09-25,Standard
+14,Nathan,White,nathan.w@email.com,555-100-0014,Columbus,OH,USA,2022-02-14,Budget
+15,Olivia,Harris,,555-100-0015,Charlotte,NC,USA,2023-03-09,Standard
+16,Peter,Martin,peter.m@email.com,555-100-0016,Indianapolis,IN,USA,2021-12-20,Premium
+17,Quinn,Garcia,quinn.g@email.com,,Seattle,WA,USA,2023-06-11,Budget
+18,Rachel,Martinez,rachel.m@email.com,555-100-0018,Denver,CO,USA,2022-08-19,Standard
+19,Sam,Robinson,sam.r@email.com,555-100-0019,Nashville,TN,USA,2023-04-02,Premium
+20,Tina,Clark,tina.c@email.com,555-100-0020,Oklahoma City,OK,USA,2022-11-28,Budget

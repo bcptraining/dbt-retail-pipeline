@@ -1,0 +1,24 @@
+# dbt artifacts
+target/
+dbt_packages/
+logs/
+
+# dbt profile (contains credentials — use env vars or GitHub Secrets instead)
+profiles.yml
+
+# Python virtual environment
+.env
+.dbt-env/
+venv/
+__pycache__/
+*.pyc
+
+# OS
+.DS_Store
+Thumbs.db
+
+# VS Code
+.vscode/
+
+# Docker env file (may contain passwords)
+.env.docker

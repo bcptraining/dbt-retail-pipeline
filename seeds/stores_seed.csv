@@ -1,0 +1,6 @@
+store_id,store_name,store_type,city,state,country,opened_date
+1,NYC Flagship,physical,New York,NY,USA,2018-03-15
+2,LA Westside,physical,Los Angeles,CA,USA,2019-07-20
+3,Chicago Loop,physical,Chicago,IL,USA,2020-01-10
+4,Online Store,online,,,USA,2017-06-01
+5,Mobile App,mobile,,,USA,2020-09-15

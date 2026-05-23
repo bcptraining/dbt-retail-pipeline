@@ -1,0 +1,44 @@
+name: "practice_dag_retail"
+version: "1.0.0"
+config-version: 2
+
+profile: "practice_dag_retail"
+
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+target-path: "target"
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+seeds:
+  practice_dag_retail:
+    +schema: raw
+    +docs:
+      show: true
+
+models:
+  practice_dag_retail:
+    staging:
+      +materialized: view
+      +schema: staging
+      +tags: ["staging"]
+      +docs:
+        show: true
+    dimensions:
+      +materialized: table
+      +schema: dimensions
+      +tags: ["dimensions"]
+      +docs:
+        show: true
+    facts:
+      +materialized: table
+      +schema: facts
+      +tags: ["facts"]
+      +docs:
+        show: true

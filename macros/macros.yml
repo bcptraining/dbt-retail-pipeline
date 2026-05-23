@@ -1,0 +1,45 @@
+version: 2
+
+macros:
+  - name: test_phone_format
+    description: >
+      Generic test that asserts a column's non-null values match the format
+      NNN-NNN-NNNN (three digits, hyphen, three digits, hyphen, four digits).
+      Null values are excluded from the check and are not considered failures.
+      Used on: customers_seed.phone.
+    arguments:
+      - name: model
+        type: relation
+        description: "The model or seed being tested."
+      - name: column_name
+        type: column
+        description: "The column containing phone numbers to validate."
+
+  - name: test_promo_code_format
+    description: >
+      Generic test that asserts a column's non-null values contain only
+      alphanumeric characters (A-Z, a-z, 0-9) with no spaces or special
+      characters. Null values are excluded from the check — most orders have
+      no promo code and that is expected.
+      Used on: orders_seed.promo_code.
+    arguments:
+      - name: model
+        type: relation
+        description: "The model or seed being tested."
+      - name: column_name
+        type: column
+        description: "The column containing promo codes to validate."
+
+  - name: test_valid_us_state
+    description: >
+      Generic test that asserts a column's non-null values are one of the 50
+      official US state two-letter abbreviations (e.g. NY, CA, TX). Null values
+      are excluded — online/mobile stores and non-US customers may have no state.
+      Used on: customers_seed.state, stores_seed.state.
+    arguments:
+      - name: model
+        type: relation
+        description: "The model or seed being tested."
+      - name: column_name
+        type: column
+        description: "The column containing state abbreviations to validate."

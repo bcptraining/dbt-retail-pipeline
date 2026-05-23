@@ -1,0 +1,379 @@
+version: 2
+
+seeds:
+  - name: customers_seed
+    description: >
+      Raw customer profile records loaded from source CSV. Each row represents
+      a unique registered customer, including contact details, geographic
+      location, and value-based segment assignment. Covers customers across
+      USA, Canada, and UK.
+    config:
+      column_types:
+        customer_id: integer
+        signup_date: date
+    columns:
+      - name: customer_id
+        description: "Unique integer identifier for each customer. Primary key."
+        tests:
+          - not_null
+          - unique
+      - name: first_name
+        description: "Customer's given name."
+      - name: last_name
+        description: "Customer's family name."
+      - name: email
+        description: "Customer's email address. Used as a contact and account identifier."
+      - name: phone
+        description: "Customer's contact phone number. Expected format: 999-999-9999."
+        tests:
+          - phone_format
+      - name: city
+        description: "City of the customer's primary mailing address."
+        tests:
+          - not_null
+      - name: state
+        description: "Two-letter US state or Canadian province abbreviation for the customer's primary address."
+        tests:
+          - not_null
+          - valid_us_state
+      - name: country
+        description: "Country of the customer's primary address. One of: USA, Canada, UK."
+        tests:
+          - accepted_values:
+              values: ["USA", "Canada", "UK"]
+      - name: signup_date
+        description: "Date the customer registered their account."
+        tests:
+          - not_null
+      - name: customer_segment
+        description: "Tier-based value segment assigned to the customer: Premium, Standard, or Budget."
+        tests:
+          - accepted_values:
+              values: ["Premium", "Standard", "Budget"]
+
+  - name: inventory_seed
+    description: >
+      Point-in-time snapshot of product stock levels across store locations.
+      Each row tracks the current quantity on hand for a product at a specific
+      store, along with the reorder threshold and next scheduled restock date.
+    config:
+      column_types:
+        inventory_id: integer
+        product_id: integer
+        store_id: integer
+        quantity_on_hand: integer
+        reorder_level: integer
+        restock_date: date
+    columns:
+      - name: inventory_id
+        description: "Unique integer identifier for each inventory record. Primary key."
+        tests:
+          - not_null
+          - unique
+      - name: product_id
+        description: "Foreign key to products_seed. Identifies the product whose stock is being tracked."
+        tests:
+          - relationships:
+              to: ref('products_seed')
+              field: product_id
+      - name: store_id
+        description: "Foreign key to stores_seed. Identifies the store location holding this stock."
+        tests:
+          - relationships:
+              to: ref('stores_seed')
+              field: store_id
+      - name: quantity_on_hand
+        description: "Current number of units available at the store location."
+      - name: reorder_level
+        description: "Minimum stock quantity that triggers a restock order."
+      - name: restock_date
+        description: "Next scheduled date to replenish inventory for this product at this store."
+
+  - name: order_items_seed
+    description: >
+      Line-item detail records for each order. Each row represents a single
+      product within an order, capturing quantity purchased, the unit price at
+      time of sale, and any discount applied. Multiple rows may exist per order.
+    config:
+      column_types:
+        order_item_id: integer
+        order_id: integer
+        product_id: integer
+        quantity: integer
+        unit_price: numeric(10,2)
+        discount_amount: numeric(10,2)
+    columns:
+      - name: order_item_id
+        description: "Unique integer identifier for each order line item. Primary key."
+        tests:
+          - not_null
+          - unique
+      - name: order_id
+        description: "Foreign key to orders_seed. Groups line items belonging to the same transaction."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('orders_seed')
+              field: order_id
+      - name: product_id
+        description: "Foreign key to products_seed. Identifies the product purchased on this line."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('products_seed')
+              field: product_id
+      - name: quantity
+        description: "Number of units of the product purchased on this line item."
+        tests:
+          - not_null
+      - name: unit_price
+        description: "Price per unit charged at the time of purchase. May differ from the current catalog price."
+        tests:
+          - not_null
+      - name: discount_amount
+        description: "Total dollar discount applied to this line item. Zero if no discount was applied."
+        tests:
+          - not_null
+
+  - name: orders_seed
+    description: >
+      Transaction header records representing customer orders. Each row is a
+      single order placed by a customer through a specific channel and store,
+      with overall fulfillment status and any promotional code applied.
+    config:
+      column_types:
+        order_id: integer
+        customer_id: integer
+        store_id: integer
+        order_date: date
+    columns:
+      - name: order_id
+        description: "Unique integer identifier for each order. Primary key."
+        tests:
+          - not_null
+          - unique
+      - name: customer_id
+        description: "Foreign key to customers_seed. Identifies the customer who placed the order."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('customers_seed')
+              field: customer_id
+      - name: store_id
+        description: "Foreign key to stores_seed. Identifies the store or channel that fulfilled the order."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stores_seed')
+              field: store_id
+      - name: order_date
+        description: "Date the order was placed by the customer."
+        tests:
+          - not_null
+      - name: order_status
+        description: "Current fulfillment status of the order: Completed, Shipped, Cancelled, or Returned."
+        tests:
+          - accepted_values:
+              values: ["Completed", "Returned", "Cancelled", "Shipped"]
+      - name: channel
+        description: "Sales channel through which the order was placed: web, store, or mobile."
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["web", "store", "mobile"]
+      - name: promo_code
+        description: "Promotional or discount code applied at checkout. Nullable — most orders have no promo code."
+        tests:
+          - promo_code_format
+
+  - name: payments_seed
+    description: >
+      Payment transaction records linked to customer orders. Each row captures
+      a single payment event including method, processing status, and the amount
+      collected. An order may have multiple payment records (e.g., refunds).
+    config:
+      column_types:
+        payment_id: integer
+        order_id: integer
+        payment_date: date
+        amount: numeric(10,2)
+    columns:
+      - name: payment_id
+        description: "Unique integer identifier for each payment transaction. Primary key."
+        tests:
+          - not_null
+          - unique
+      - name: order_id
+        description: "Foreign key to orders_seed. Associates this payment with a specific order."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('orders_seed')
+              field: order_id
+      - name: payment_date
+        description: "Date the payment was processed."
+        tests:
+          - not_null
+      - name: payment_method
+        description: "Method used to make the payment: credit_card, debit_card, cash, paypal, or store_credit."
+        tests:
+          - not_null
+          - accepted_values:
+              values:
+                ["credit_card", "cash", "paypal", "debit_card", "store_credit"]
+      - name: payment_status
+        description: "Current status of the payment transaction: Pending, Completed, Refunded, or Voided."
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["Pending", "Completed", "Refunded", "Voided"]
+      - name: amount
+        description: "Total dollar amount of this payment transaction."
+        tests:
+          - not_null
+
+  - name: products_seed
+    description: >
+      Product catalog records containing attributes for all sellable items.
+      Each row represents a unique product with pricing, categorization, brand,
+      and cost information used for margin and profitability analysis.
+    config:
+      column_types:
+        product_id: integer
+        unit_price: numeric(10,2)
+        cost_price: numeric(10,2)
+    columns:
+      - name: product_id
+        description: "Unique integer identifier for each product. Primary key."
+        tests:
+          - not_null
+          - unique
+      - name: product_name
+        description: "Human-readable descriptive name of the product."
+      - name: category
+        description: "Top-level product classification (e.g., Electronics, Apparel, Footwear)."
+        tests:
+          - not_null
+          - accepted_values:
+              values:
+                [
+                  "Footwear",
+                  "Electronics",
+                  "Apparel",
+                  "Sports",
+                  "Accessories",
+                  "Furniture",
+                  "Home Appliances",
+                  "Personal Care",
+                ]
+      - name: subcategory
+        description: "Secondary classification providing more granular grouping within a category."
+      - name: brand
+        description: "Manufacturer or brand name associated with the product."
+      - name: unit_price
+        description: "Retail selling price per unit in dollars at the time of seed load."
+        tests:
+          - not_null
+      - name: cost_price
+        description: "Wholesale or manufacturing cost per unit in dollars. Used to calculate gross margin."
+        tests:
+          - not_null
+
+  - name: stores_seed
+    description: >
+      Store master data for all retail locations and sales channels. Each row
+      represents a distinct store or channel, including physical retail locations
+      and online/mobile storefronts, with geographic and operational metadata.
+    config:
+      column_types:
+        store_id: integer
+        opened_date: date
+    columns:
+      - name: store_id
+        description: "Unique integer identifier for each store or channel. Primary key."
+        tests:
+          - not_null
+          - unique
+      - name: store_name
+        description: "Human-readable name for the store or channel (e.g., NYC Flagship, Online Store)."
+      - name: store_type
+        description: "Operational format of the store: physical (brick-and-mortar), online, or mobile."
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["physical", "online", "mobile"]
+      - name: city
+        description: "City where the store is located. Null for online and mobile storefronts."
+      - name: state
+        description: "Two-letter US state abbreviation where the store is located. Null for online/mobile stores."
+        tests:
+          - valid_us_state
+      - name: country
+        description: "Country where the store operates: USA, Canada, or UK."
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["USA", "Canada", "UK"]
+      - name: opened_date
+        description: "Date the store opened or the channel launched."
+        tests:
+          - not_null
+
+  - name: web_activity_seed
+    description: >
+      Website session-level behavioral data capturing customer browsing activity.
+      Each row represents a single web session, tracking the customer (if
+      authenticated), marketing channel, device, pages viewed, product browsed,
+      and whether the session resulted in a purchase conversion.
+    config:
+      column_types:
+        session_id: integer
+        customer_id: integer
+        pages_viewed: integer
+        product_id_viewed: integer
+        session_date: date
+    columns:
+      - name: session_id
+        description: "Unique integer identifier for each web browsing session. Primary key."
+        tests:
+          - not_null
+          - unique
+      - name: customer_id
+        description: "Foreign key to customers_seed. Null for unauthenticated (anonymous) sessions."
+        tests:
+          - relationships:
+              to: ref('customers_seed')
+              field: customer_id
+      - name: session_date
+        description: "Date the browsing session occurred."
+        tests:
+          - not_null
+      - name: pages_viewed
+        description: "Total number of pages viewed by the visitor during this session."
+        tests:
+          - not_null
+      - name: product_id_viewed
+        description: "Product page most prominently or last viewed during the session."
+        tests:
+          - not_null
+      - name: channel
+        description: "Marketing channel that drove the session: organic_search, paid_search, email, direct, or social_media."
+        tests:
+          - not_null
+          - accepted_values:
+              values:
+                [
+                  "organic_search",
+                  "direct",
+                  "email",
+                  "paid_search",
+                  "social_media",
+                ]
+      - name: device_type
+        description: "Device category used during the session: desktop, mobile, or tablet."
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["desktop", "mobile", "tablet"]
+      - name: converted
+        description: "Boolean flag indicating whether this session resulted in a completed purchase."

@@ -1,0 +1,19 @@
+product_id,product_name,category,subcategory,brand,unit_price,cost_price
+1,Running Shoes,Footwear,Athletic,Nike,120.00,65.00
+2,Bluetooth Speaker,Electronics,Audio,JBL,90.00,42.00
+3,Formal Shirt,Apparel,Tops,Brooks Brothers,45.00,18.00
+4,Laptop Bag,Accessories,Bags,Targus,75.00,30.00
+5,Yoga Mat,Sports,Fitness,,35.00,12.00
+6,Smartwatch,Electronics,Wearables,Samsung,250.00,130.00
+7,Coffee Maker,Home Appliances,Kitchen,Keurig,80.00,35.00
+8,Denim Jeans,Apparel,Bottoms,Levi's,60.00,22.00
+9,Sunglasses,Accessories,Eyewear,Ray-Ban,110.00,50.00
+10,Headphones,Electronics,Audio,Sony,150.00,75.00
+11,Winter Jacket,Apparel,Outerwear,North Face,180.00,90.00
+12,Moisturizer,Personal Care,Skincare,CeraVe,25.00,8.00
+13,Standing Desk,Furniture,Office,Uplift,350.00,180.00
+14,Protein Powder,Sports,Nutrition,Optimum,55.00,22.00
+15,Tablet,Electronics,Computing,Apple,499.00,280.00
+16,Backpack,Accessories,Bags,JanSport,55.00,20.00
+17,Perfume,Personal Care,Fragrance,Chanel,95.00,40.00
+18,Wireless Charger,Electronics,Accessories,Anker,35.00,12.00
