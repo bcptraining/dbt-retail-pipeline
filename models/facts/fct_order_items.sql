@@ -5,23 +5,23 @@
 }}
 
 with order_items as (
-    select * from {{ ref('order_items_seed') }}
+    select * from {{ ref('stg_order_items') }}
 ),
 
 orders as (
-    select * from {{ ref('orders_seed') }}
+    select * from {{ ref('stg_orders') }}
 ),
 
 customers as (
-    select * from {{ ref('customers_seed') }}
+    select * from {{ ref('dim_customers') }}
 ),
 
 products as (
-    select * from {{ ref('products_seed') }}
+    select * from {{ ref('dim_products') }}
 ),
 
 stores as (
-    select * from {{ ref('stores_seed') }}
+    select * from {{ ref('dim_stores') }}
 )
 
 select

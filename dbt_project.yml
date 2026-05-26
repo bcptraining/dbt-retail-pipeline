@@ -1,8 +1,8 @@
-name: "practice_dag_retail"
+name: "dbt_retail_pipeline"
 version: "1.0.0"
 config-version: 2
 
-profile: "practice_dag_retail"
+profile: "dbt_retail_pipeline"
 
 model-paths: ["models"]
 analysis-paths: ["analyses"]
@@ -17,13 +17,14 @@ clean-targets:
   - "dbt_packages"
 
 seeds:
-  practice_dag_retail:
+  dbt_retail_pipeline:
     +schema: raw
+    +tags: ["seeds"]
     +docs:
       show: true
 
 models:
-  practice_dag_retail:
+  dbt_retail_pipeline:
     staging:
       +materialized: view
       +schema: staging
@@ -32,13 +33,13 @@ models:
         show: true
     dimensions:
       +materialized: table
-      +schema: dimensions
+      +schema: marts
       +tags: ["dimensions"]
       +docs:
         show: true
     facts:
       +materialized: table
-      +schema: facts
+      +schema: marts
       +tags: ["facts"]
       +docs:
         show: true

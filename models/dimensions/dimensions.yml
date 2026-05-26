@@ -1,0 +1,144 @@
+version: 2
+
+models:
+  - name: dim_customers
+    description: >
+      Customer dimension. Materialized table built from stg_customers.
+      Contains one row per customer with cleaned and standardized attributes.
+    columns:
+      - name: customer_id
+        description: "Primary key. Unique integer identifier for each customer."
+        tests:
+          - not_null
+          - unique
+      - name: first_name
+        description: "Customer's given name."
+      - name: last_name
+        description: "Customer's family name."
+      - name: email
+        description: "Customer's email address."
+      - name: phone
+        description: "Customer's contact phone number."
+      - name: city
+        description: "City of the customer's primary address."
+      - name: state
+        description: "Two-letter US state abbreviation. Uppercase."
+      - name: country
+        description: "Country of residence. Uppercase ISO-style: USA, Canada, UK."
+      - name: signup_date
+        description: "Date the customer registered their account."
+        tests:
+          - not_null
+      - name: customer_segment
+        description: "Tier-based value segment. Lowercased: 'premium' | 'standard' | 'budget'."
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["premium", "standard", "budget"]
+
+  - name: dim_products
+    description: >
+      Product dimension. Materialized table built from stg_products.
+      Contains one row per product with catalog attributes and pricing.
+    columns:
+      - name: product_id
+        description: "Primary key. Unique integer identifier for each product."
+        tests:
+          - not_null
+          - unique
+      - name: product_name
+        description: "Human-readable product name."
+      - name: category
+        description: "Top-level product classification. Lowercased."
+        tests:
+          - not_null
+      - name: subcategory
+        description: "Secondary classification within a category. Lowercased."
+      - name: brand
+        description: "Manufacturer or brand name."
+      - name: unit_price
+        description: "Catalog retail price per unit in dollars."
+        tests:
+          - not_null
+      - name: cost_price
+        description: "Wholesale cost per unit in dollars. Used for margin calculations."
+        tests:
+          - not_null
+
+  - name: dim_stores
+    description: >
+      Store dimension. Materialized table built from stg_stores.
+      Contains one row per store or sales channel. city and state are null
+      for online and mobile stores.
+    columns:
+      - name: store_id
+        description: "Primary key. Unique integer identifier for each store or channel."
+        tests:
+          - not_null
+          - unique
+      - name: store_name
+        description: "Human-readable store name."
+      - name: store_type
+        description: "Operational format: 'physical' | 'online' | 'mobile'."
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["physical", "online", "mobile"]
+      - name: city
+        description: "City of store location. Null for online and mobile stores."
+      - name: state
+        description: "Two-letter US state abbreviation. Uppercase. Null for online/mobile stores."
+      - name: country
+        description: "Country of operation. Uppercase: USA."
+        tests:
+          - not_null
+      - name: opened_date
+        description: "Date the store opened or channel launched."
+        tests:
+          - not_null
+
+  - name: dim_date
+    description: >
+      Date dimension. Materialized table generated from a date spine covering
+      2020-01-01 through 2030-12-31. One row per calendar day. Used as the
+      time axis for all fact tables via the date_key foreign key.
+    columns:
+      - name: date_key
+        description: "Primary key. The calendar date value."
+        tests:
+          - not_null
+          - unique
+      - name: year
+        description: "Calendar year (e.g. 2024)."
+      - name: quarter
+        description: "Quarter number 1–4."
+      - name: quarter_name
+        description: "Quarter label (e.g. 'Q1')."
+      - name: month
+        description: "Month number 1–12."
+      - name: month_name
+        description: "Full month name (e.g. 'January')."
+      - name: month_short
+        description: "Abbreviated month name (e.g. 'Jan')."
+      - name: week_of_year
+        description: "ISO week number within the year."
+      - name: day_of_month
+        description: "Day number within the month (1–31)."
+      - name: day_of_year
+        description: "Day number within the year (1–366)."
+      - name: day_of_week
+        description: "Day of week number: 0 = Sunday, 6 = Saturday."
+      - name: day_name
+        description: "Full day name (e.g. 'Monday')."
+      - name: day_short
+        description: "Abbreviated day name (e.g. 'Mon')."
+      - name: is_weekend
+        description: "True if the date falls on Saturday or Sunday."
+      - name: year_month_key
+        description: "Sortable integer key: YYYYMM (e.g. 202401)."
+      - name: year_month
+        description: "Human-readable year-month label (e.g. '2024-01')."
+      - name: year_quarter_key
+        description: "Sortable integer key: YYYYQ (e.g. 20241)."
+      - name: year_quarter
+        description: "Human-readable year-quarter label (e.g. 'Q1 2024')."
