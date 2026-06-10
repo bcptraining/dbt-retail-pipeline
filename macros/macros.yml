@@ -55,3 +55,18 @@ macros:
       - name: column_name
         type: column
         description: "The column containing price values to validate."
+
+  - name: dynamic_total_sales
+    description: >
+      Utility macro that renders a SUM aggregation expression with a configurable
+      column name and alias. Defaults to summing the literal 1 (row count) aliased
+      as total_sales. Pass column_name to aggregate a numeric column and alias to
+      override the output column name.
+      Used on: fact models that require a flexible total-sales aggregation.
+    arguments:
+      - name: column_name
+        type: column
+        description: "The numeric column to sum. Defaults to '1' (row count)."
+      - name: alias
+        type: string
+        description: "The alias for the resulting SUM expression. Defaults to 'total_sales'."
