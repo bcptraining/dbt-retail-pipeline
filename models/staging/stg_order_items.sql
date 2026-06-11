@@ -14,6 +14,5 @@ select
     product_id,
     quantity,
     unit_price::numeric(10,2)                        as unit_price,       -- transaction price at time of sale
-    discount_amount::numeric(10,2)                  as discount_amount,
-    (unit_price::numeric(10,2) - discount_amount::numeric(10,2)) * quantity  as line_total
+    discount_amount::numeric(10,2)                  as discount_amount
 from source
