@@ -1,0 +1,60 @@
+services:
+
+  pg_dev:
+    image: postgres:15
+    container_name: pg_dev
+    restart: unless-stopped
+    ports:
+      - "5441:5432"
+    environment:
+      POSTGRES_USER: dbt_user
+      POSTGRES_PASSWORD: ${DEV_DB_PASSWORD}
+      POSTGRES_DB: retail_dev
+    volumes:
+      - pg_dev_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dbt_user -d retail_dev"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  pg_qa:
+    image: postgres:15
+    container_name: pg_qa
+    restart: unless-stopped
+    ports:
+      - "5442:5432"
+    environment:
+      POSTGRES_USER: dbt_user
+      POSTGRES_PASSWORD: ${QA_DB_PASSWORD}
+      POSTGRES_DB: retail_qa
+    volumes:
+      - pg_qa_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dbt_user -d retail_qa"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  pg_prod:
+    image: postgres:15
+    container_name: pg_prod
+    restart: unless-stopped
+    ports:
+      - "5443:5432"
+    environment:
+      POSTGRES_USER: dbt_user
+      POSTGRES_PASSWORD: ${PROD_DB_PASSWORD}
+      POSTGRES_DB: retail_prod
+    volumes:
+      - pg_prod_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dbt_user -d retail_prod"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pg_dev_data:
+  pg_qa_data:
+  pg_prod_data:
