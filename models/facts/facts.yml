@@ -51,6 +51,8 @@ models:
               arguments:
                 to: ref('dim_date')
                 field: date_key
+      - name: order_year
+        description: "Derived from order_date. Extracted year of the order. Useful for partitioning and time-based analysis."
       - name: order_status
         description: "Degenerate dimension. Fulfillment status of the parent order."
       - name: channel
