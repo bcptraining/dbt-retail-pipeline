@@ -242,7 +242,7 @@ models:
           - relationships:
               arguments:
                 to: ref('dim_products')
-                field: product_id
+                field: product_id_viewed
       - name: date_key
         description: "Session date. Foreign key to dim_date."
         tests:
