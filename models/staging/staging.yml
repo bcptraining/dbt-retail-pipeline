@@ -308,13 +308,12 @@ models:
         tests:
           - accepted_values:
               values:
-                [
-                  "organic_search",
-                  "direct",
-                  "email",
-                  "paid_search",
-                  "social_media",
-                ]
+                - "organic_search"
+                - "direct"
+                - "email"
+                - "paid_search"
+                - "social_media"
+
       - name: device_type
         description: "Device used: 'desktop' | 'mobile' | 'tablet'."
         tests:

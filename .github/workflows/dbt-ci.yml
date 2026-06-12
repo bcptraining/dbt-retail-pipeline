@@ -1,0 +1,57 @@
+name: dbt CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  dbt-build:
+    runs-on: ubuntu-latest
+    env:
+      DEV_DB_PASSWORD: ${{ secrets.DEV_DB_PASSWORD || github.run_id }}
+      QA_DB_PASSWORD: ${{ secrets.QA_DB_PASSWORD || github.run_id }}
+      PROD_DB_PASSWORD: ${{ secrets.PROD_DB_PASSWORD || github.run_id }}
+      DBT_USER: ci
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dbt (Postgres adapter)
+        run: |
+          pip install dbt-postgres
+
+      - name: Create dbt profile
+        run: |
+          mkdir -p ~/.dbt
+          cp profiles.yml.example ~/.dbt/profiles.yml
+
+      - name: Start local Postgres
+        run: |
+          docker compose up -d pg_dev
+
+      - name: Run dbt build
+        run: |
+          dbt --version
+          dbt debug --target dev
+          dbt build --target dev
+        working-directory: .
+
+      - name: Upload dbt artifacts (logs + target)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dbt-artifacts
+          path: |
+            logs
+            target
