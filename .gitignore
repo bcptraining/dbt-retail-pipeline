@@ -2,6 +2,7 @@
 target/
 dbt_packages/
 logs/
+testrun_log.txt
 
 # dbt profile (contains credentials — use env vars or GitHub Secrets instead)
 profiles.yml

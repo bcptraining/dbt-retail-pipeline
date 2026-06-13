@@ -136,3 +136,21 @@ dbt-retail-pipeline/
 | `phone_format`     | Validates `999-999-9999` pattern                 |
 | `valid_us_state`   | Checks two-letter US state/Canadian province     |
 | `promo_code_format`| Validates promo code structure                   |
+
+---
+
+## Quick Build Script
+
+`run_dbt_build.bat` is a Windows convenience script for running `dbt build` locally and capturing the output. Double-click it (or run it from a terminal) and it will:
+
+- Run `dbt build` against the default dev target
+- Redirect all output to a timestamped log file under `logs/`, e.g. `logs\dbt_build_FRI_20260612-0930.log`
+- Print the log file path to the console when finished
+
+The `logs/` folder is created automatically if it doesn't exist. Log files are excluded from version control.
+
+---
+
+## Good Idea Pile
+
+- [About dbt Wizard CLI | dbt Developer Hub](https://docs.getdbt.com/docs/dbt-ai/about-dbt-wizard-cli?version=2.0&name=Fusion)
