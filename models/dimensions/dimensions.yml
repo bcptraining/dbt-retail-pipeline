@@ -22,7 +22,7 @@ models:
       - name: city
         description: "City of the customer's primary address."
       - name: state
-        description: "Two-letter US state abbreviation. Uppercase."
+        description: "Two-letter state/province/region code for the customer's primary address. Uppercase where applicable."
       - name: country
         description: "Country of residence. Uppercase ISO-style: USA, Canada, UK."
       - name: signup_date
