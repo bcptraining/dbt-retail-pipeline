@@ -13,9 +13,9 @@ jobs:
   dbt-build:
     runs-on: ubuntu-latest
     env:
-      DEV_DB_PASSWORD: ${{ secrets.DEV_DB_PASSWORD || github.run_id }}
-      QA_DB_PASSWORD: ${{ secrets.QA_DB_PASSWORD || github.run_id }}
-      PROD_DB_PASSWORD: ${{ secrets.PROD_DB_PASSWORD || github.run_id }}
+      DEV_DB_PASSWORD: ${{ secrets.DEV_DB_PASSWORD || format('ci-{0}', github.run_id) }}
+      QA_DB_PASSWORD: ${{ secrets.QA_DB_PASSWORD || format('ci-{0}', github.run_id) }}
+      PROD_DB_PASSWORD: ${{ secrets.PROD_DB_PASSWORD || format('ci-{0}', github.run_id) }}
       DBT_USER: ci
 
     steps:
