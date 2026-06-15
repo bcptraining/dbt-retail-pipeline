@@ -29,7 +29,7 @@ jobs:
 
       - name: Install dbt (Postgres adapter)
         run: |
-          pip install dbt-postgres
+          pip install "dbt-postgres<2.0.0"
 
       - name: Create dbt profile
         run: |
