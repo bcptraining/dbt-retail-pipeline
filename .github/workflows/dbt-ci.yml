@@ -27,9 +27,15 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install dbt (Postgres adapter)
+      - name: Install dbt
         run: |
-          pip install "dbt-postgres<2.0.0"
+          python -m pip install --upgrade pip
+          python -m pip install "dbt-core<2.0.0" "dbt-postgres<2.0.0"
+
+      - name: Verify dbt executable
+        run: |
+          which dbt || true
+          python -m dbt --version
 
       - name: Create dbt profile
         run: |
@@ -42,9 +48,8 @@ jobs:
 
       - name: Run dbt build
         run: |
-          dbt --version
-          dbt debug --target dev
-          dbt build --target dev
+          python -m dbt debug --target dev
+          python -m dbt build --target dev
         working-directory: .
 
       - name: Upload dbt artifacts (logs + target)
