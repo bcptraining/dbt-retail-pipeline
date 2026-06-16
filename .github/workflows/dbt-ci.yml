@@ -90,3 +90,5 @@ jobs:
 
       - name: Mark CI as complete
         run: echo "CI completed successfully"
+      - name: Finalize check run
+        run: exit 0
