@@ -17,6 +17,7 @@ permissions:
 
 jobs:
   dbt-build:
+    name: dbt-build
     runs-on: ubuntu-latest
     env:
       DEV_DB_PASSWORD: ${{ secrets.DEV_DB_PASSWORD || format('ci-{0}', github.run_id) }}
