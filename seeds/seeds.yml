@@ -40,8 +40,7 @@ seeds:
         description: "Country of the customer's primary address. One of: USA, Canada, UK."
         tests:
           - accepted_values:
-              arguments:
-                values: ["USA", "Canada", "UK"]
+              values: ["USA", "Canada", "UK"]
       - name: signup_date
         description: "Date the customer registered their account."
         tests:
@@ -50,8 +49,7 @@ seeds:
         description: "Tier-based value segment assigned to the customer: Premium, Standard, or Budget."
         tests:
           - accepted_values:
-              arguments:
-                values: ["Premium", "Standard", "Budget"]
+              values: ["Premium", "Standard", "Budget"]
 
   - name: inventory_seed
     description: >
@@ -176,15 +174,13 @@ seeds:
         description: "Current fulfillment status of the order: Completed, Shipped, Cancelled, or Returned."
         tests:
           - accepted_values:
-              arguments:
-                values: ["Completed", "Returned", "Cancelled", "Shipped"]
+              values: ["Completed", "Returned", "Cancelled", "Shipped"]
       - name: channel
         description: "Sales channel through which the order was placed: web, store, or mobile."
         tests:
           - not_null
           - accepted_values:
-              arguments:
-                values: ["web", "store", "mobile"]
+              values: ["web", "store", "mobile"]
       - name: promo_code
         description: "Promotional or discount code applied at checkout. Nullable — most orders have no promo code."
         tests:
@@ -223,22 +219,14 @@ seeds:
         tests:
           - not_null
           - accepted_values:
-              arguments:
-                values:
-                  [
-                    "credit_card",
-                    "cash",
-                    "paypal",
-                    "debit_card",
-                    "store_credit",
-                  ]
+              values:
+                ["credit_card", "cash", "paypal", "debit_card", "store_credit"]
       - name: payment_status
         description: "Current status of the payment transaction: Pending, Completed, Refunded, or Voided."
         tests:
           - not_null
           - accepted_values:
-              arguments:
-                values: ["Pending", "Completed", "Refunded", "Voided"]
+              values: ["Pending", "Completed", "Refunded", "Voided"]
       - name: amount
         description: "Total dollar amount of this payment transaction."
         tests:
@@ -267,18 +255,17 @@ seeds:
         tests:
           - not_null
           - accepted_values:
-              arguments:
-                values:
-                  [
-                    "Footwear",
-                    "Electronics",
-                    "Apparel",
-                    "Sports",
-                    "Accessories",
-                    "Furniture",
-                    "Home Appliances",
-                    "Personal Care",
-                  ]
+              values:
+                [
+                  "Footwear",
+                  "Electronics",
+                  "Apparel",
+                  "Sports",
+                  "Accessories",
+                  "Furniture",
+                  "Home Appliances",
+                  "Personal Care",
+                ]
       - name: subcategory
         description: "Secondary classification providing more granular grouping within a category."
       - name: brand
@@ -314,8 +301,7 @@ seeds:
         tests:
           - not_null
           - accepted_values:
-              arguments:
-                values: ["physical", "online", "mobile"]
+              values: ["physical", "online", "mobile"]
       - name: city
         description: "City where the store is located. Null for online and mobile storefronts."
       - name: state
@@ -327,8 +313,7 @@ seeds:
         tests:
           - not_null
           - accepted_values:
-              arguments:
-                values: ["USA", "Canada", "UK"]
+              values: ["USA", "Canada", "UK"]
       - name: opened_date
         description: "Date the store opened or the channel launched."
         tests:
@@ -376,21 +361,19 @@ seeds:
         tests:
           - not_null
           - accepted_values:
-              arguments:
-                values:
-                  [
-                    "organic_search",
-                    "direct",
-                    "email",
-                    "paid_search",
-                    "social_media",
-                  ]
+              values:
+                [
+                  "organic_search",
+                  "direct",
+                  "email",
+                  "paid_search",
+                  "social_media",
+                ]
       - name: device_type
         description: "Device category used during the session: desktop, mobile, or tablet."
         tests:
           - not_null
           - accepted_values:
-              arguments:
-                values: ["desktop", "mobile", "tablet"]
+              values: ["desktop", "mobile", "tablet"]
       - name: converted
         description: "Boolean flag indicating whether this session resulted in a completed purchase."
