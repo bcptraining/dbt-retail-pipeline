@@ -46,7 +46,6 @@ select
     s.store_type,
     s.country                                                           as store_country,
     extract(year from o.order_date) :: int as order_year,
-    -- o.customer_id,
 
     -- measures
     oi.quantity,

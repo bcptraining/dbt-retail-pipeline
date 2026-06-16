@@ -13,9 +13,9 @@ jobs:
   dbt-build:
     runs-on: ubuntu-latest
     env:
-      DEV_DB_PASSWORD: ${{ secrets.DEV_DB_PASSWORD || github.run_id }}
-      QA_DB_PASSWORD: ${{ secrets.QA_DB_PASSWORD || github.run_id }}
-      PROD_DB_PASSWORD: ${{ secrets.PROD_DB_PASSWORD || github.run_id }}
+      DEV_DB_PASSWORD: ${{ secrets.DEV_DB_PASSWORD || format('ci-{0}', github.run_id) }}
+      QA_DB_PASSWORD: ${{ secrets.QA_DB_PASSWORD || format('ci-{0}', github.run_id) }}
+      PROD_DB_PASSWORD: ${{ secrets.PROD_DB_PASSWORD || format('ci-{0}', github.run_id) }}
       DBT_USER: ci
 
     steps:
@@ -27,9 +27,17 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install dbt (Postgres adapter)
+      - name: Install dbt
         run: |
-          pip install dbt-postgres
+          python -m pip install --upgrade pip
+          python -m pip install "dbt-core<2.0.0" "dbt-postgres<2.0.0"
+
+      - name: Verify dbt executable
+        run: |
+          which dbt || true
+          dbt --version
+          python --version
+          pip --version
 
       - name: Create dbt profile
         run: |
@@ -42,10 +50,8 @@ jobs:
 
       - name: Run dbt build
         run: |
-          dbt --version
           dbt debug --target dev
           dbt build --target dev
-        working-directory: .
 
       - name: Upload dbt artifacts (logs + target)
         if: always()
