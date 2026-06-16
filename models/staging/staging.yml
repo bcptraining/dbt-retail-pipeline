@@ -55,15 +55,17 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('stg_customers')
-              field: customer_id
+              arguments:
+                to: ref('stg_customers')
+                field: customer_id
       - name: store_id
         description: "Foreign key to stg_stores."
         tests:
           - not_null
           - relationships:
-              to: ref('stg_stores')
-              field: store_id
+              arguments:
+                to: ref('stg_stores')
+                field: store_id
       - name: order_date
         description: "Date the order was placed."
         tests:
@@ -100,15 +102,17 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('stg_orders')
-              field: order_id
+              arguments:
+                to: ref('stg_orders')
+                field: order_id
       - name: product_id
         description: "Foreign key to stg_products."
         tests:
           - not_null
           - relationships:
-              to: ref('stg_products')
-              field: product_id
+              arguments:
+                to: ref('stg_products')
+                field: product_id
       - name: quantity
         description: "Number of units purchased on this line."
         tests:
@@ -138,8 +142,9 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('stg_orders')
-              field: order_id
+              arguments:
+                to: ref('stg_orders')
+                field: order_id
       - name: payment_date
         description: "Date the payment was processed."
         tests:
@@ -251,14 +256,16 @@ models:
         description: "Foreign key to stg_products."
         tests:
           - relationships:
-              to: ref('stg_products')
-              field: product_id
+              arguments:
+                to: ref('stg_products')
+                field: product_id
       - name: store_id
         description: "Foreign key to stg_stores."
         tests:
           - relationships:
-              to: ref('stg_stores')
-              field: store_id
+              arguments:
+                to: ref('stg_stores')
+                field: store_id
       - name: quantity_on_hand
         description: "Current units available at the store."
       - name: reorder_level
@@ -280,8 +287,9 @@ models:
         description: "Foreign key to stg_customers. Null for anonymous sessions."
         tests:
           - relationships:
-              to: ref('stg_customers')
-              field: customer_id
+              arguments:
+                to: ref('stg_customers')
+                field: customer_id
       - name: session_date
         description: "Date the browsing session occurred."
         tests:
@@ -292,8 +300,9 @@ models:
         description: "Product browsed during the session. Foreign key to stg_products."
         tests:
           - relationships:
-              to: ref('stg_products')
-              field: product_id
+              arguments:
+                to: ref('stg_products')
+                field: product_id
       - name: channel
         description: "Marketing channel: 'organic_search' | 'direct' | 'email' | 'paid_search' | 'social_media'."
         tests:
@@ -304,7 +313,6 @@ models:
                 - "email"
                 - "paid_search"
                 - "social_media"
-
       - name: device_type
         description: "Device used: 'desktop' | 'mobile' | 'tablet'."
         tests:
