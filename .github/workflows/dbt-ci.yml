@@ -50,14 +50,21 @@ jobs:
 
       - name: Wait for Postgres to be ready
         run: |
+          ready=0
           for i in {1..30}; do
             if docker exec pg_dev pg_isready -U dbt_user -d retail_dev; then
               echo "Postgres is ready"
+              ready=1
               break
             fi
             echo "Waiting for Postgres..."
             sleep 2
           done
+
+          if [ "$ready" -ne 1 ]; then
+            echo "Postgres did not become ready within the allotted time" >&2
+            exit 1
+          fi
 
       - name: Run dbt build
         run: |
