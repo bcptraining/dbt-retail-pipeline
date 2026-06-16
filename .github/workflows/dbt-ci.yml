@@ -35,7 +35,9 @@ jobs:
       - name: Verify dbt executable
         run: |
           which dbt || true
-          python -m dbt --version
+          dbt --version
+          python --version
+          pip --version
 
       - name: Create dbt profile
         run: |
@@ -48,14 +50,8 @@ jobs:
 
       - name: Run dbt build
         run: |
-<<<<<<< HEAD
           dbt debug --target dev
           dbt build --target dev
-=======
-          python -m dbt debug --target dev
-          python -m dbt build --target dev
-        working-directory: .
->>>>>>> c44e705 (update dbt-ci workflow to avoid Fusion as postgres is not yet supported))
 
       - name: Upload dbt artifacts (logs + target)
         if: always()
