@@ -29,7 +29,13 @@ jobs:
 
       - name: Install dbt
         run: |
-          pip install "dbt-postgres<2.0.0"
+          python -m pip install --upgrade pip
+          python -m pip install "dbt-core<2.0.0" "dbt-postgres<2.0.0"
+
+      - name: Verify dbt executable
+        run: |
+          which dbt || true
+          python -m dbt --version
 
       - name: Create dbt profile
         run: |
@@ -42,8 +48,14 @@ jobs:
 
       - name: Run dbt build
         run: |
+<<<<<<< HEAD
           dbt debug --target dev
           dbt build --target dev
+=======
+          python -m dbt debug --target dev
+          python -m dbt build --target dev
+        working-directory: .
+>>>>>>> c44e705 (update dbt-ci workflow to avoid Fusion as postgres is not yet supported))
 
       - name: Upload dbt artifacts (logs + target)
         if: always()
