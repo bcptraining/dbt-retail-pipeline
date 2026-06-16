@@ -49,6 +49,7 @@ jobs:
           docker compose up -d pg_dev
 
       - name: Wait for Postgres to be ready
+        shell: bash
         run: |
           ready=0
           for i in {1..30}; do
