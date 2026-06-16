@@ -26,6 +26,14 @@ jobs:
       DBT_USER: ci
 
     steps:
+      - name: Initialize check run
+        uses: actions/github-script@v7
+        with:
+          script: |
+            core.startGroup('dbt-build')
+            core.info('Starting dbt CI check run')
+            core.endGroup()
+
       - name: Checkout repo
         uses: actions/checkout@v4
 
@@ -90,5 +98,9 @@ jobs:
 
       - name: Mark CI as complete
         run: echo "CI completed successfully"
+
       - name: Finalize check run
-        run: exit 0
+        uses: actions/github-script@v7
+        with:
+          script: |
+            core.notice('dbt CI completed successfully')
