@@ -48,6 +48,17 @@ jobs:
         run: |
           docker compose up -d pg_dev
 
+      - name: Wait for Postgres to be ready
+        run: |
+          for i in {1..30}; do
+            if docker exec pg_dev pg_isready -U dbt_user -d retail_dev; then
+              echo "Postgres is ready"
+              break
+            fi
+            echo "Waiting for Postgres..."
+            sleep 2
+          done
+
       - name: Run dbt build
         run: |
           dbt debug --target dev
