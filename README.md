@@ -18,11 +18,11 @@ This project models a retail business domain (customers, products, orders, payme
 
 Three isolated PostgreSQL servers run via Docker Compose, one per environment:
 
-| Environment | Docker Container | Port  | Purpose                          |
-|-------------|-----------------|-------|----------------------------------|
-| `dev`       | `pg_dev`        | 5441  | Active development, personal sandbox |
-| `qa`        | `pg_qa`         | 5442  | Integration testing, pre-release validation |
-| `prod`      | `pg_prod`       | 5443  | Production data, clean schema names |
+| Environment | Docker Container | Port | Purpose                                     |
+| ----------- | ---------------- | ---- | ------------------------------------------- |
+| `dev`       | `pg_dev`         | 5441 | Active development, personal sandbox        |
+| `qa`        | `pg_qa`          | 5442 | Integration testing, pre-release validation |
+| `prod`      | `pg_prod`        | 5443 | Production data, clean schema names         |
 
 > **Note:** Ports 5441–5443 are used to avoid conflict with a local PostgreSQL 18 installation on port 5432.
 
@@ -41,11 +41,11 @@ feature/xyz  ──►  develop  ──►  main
    dev              qa           prod
 ```
 
-| Branch      | Target Environment | Trigger                        |
-|-------------|-------------------|--------------------------------|
-| `feature/*` | dev               | Local dbt runs by the developer |
-| `develop`   | qa                | GitHub Actions on push/PR merge |
-| `main`      | prod              | GitHub Actions on PR merge from develop |
+| Branch      | Target Environment | Trigger                                 |
+| ----------- | ------------------ | --------------------------------------- |
+| `feature/*` | dev                | Local dbt runs by the developer         |
+| `develop`   | qa                 | GitHub Actions on push/PR merge         |
+| `main`      | prod               | GitHub Actions on PR merge from develop |
 
 ### Workflow
 
@@ -59,15 +59,15 @@ feature/xyz  ──►  develop  ──►  main
 
 ## Current Build Status
 
-| Component | Status |
-|-----------|--------|
-| Project scaffold (seeds, staging, facts, dimensions) | ✅ Complete |
-| Git repo with `main` / `develop` branch strategy | ✅ Complete |
-| Docker Compose — 3 isolated PostgreSQL 15 servers | ✅ Complete |
-| dbt profiles for dev / qa / prod | ✅ Complete |
-| `dbt debug` passing on all 3 targets | ✅ Complete |
-| GitHub Actions CI/CD workflows | 🔜 In progress |
-| Remaining dimension models (dim_customers, dim_products, dim_stores) | 🔜 Pending |
+| Component                                                            | Status         |
+| -------------------------------------------------------------------- | -------------- |
+| Project scaffold (seeds, staging, facts, dimensions)                 | ✅ Complete    |
+| Git repo with `main` / `develop` branch strategy                     | ✅ Complete    |
+| Docker Compose — 3 isolated PostgreSQL 15 servers                    | ✅ Complete    |
+| dbt profiles for dev / qa / prod                                     | ✅ Complete    |
+| `dbt debug` passing on all 3 targets                                 | ✅ Complete    |
+| GitHub Actions CI/CD workflows                                       | 🔜 In progress |
+| Remaining dimension models (dim_customers, dim_products, dim_stores) | 🔜 Pending     |
 
 ---
 
@@ -131,11 +131,11 @@ dbt-retail-pipeline/
 
 ## Custom Tests
 
-| Test               | Description                                      |
-|--------------------|--------------------------------------------------|
-| `phone_format`     | Validates `999-999-9999` pattern                 |
-| `valid_us_state`   | Checks two-letter US state/Canadian province     |
-| `promo_code_format`| Validates promo code structure                   |
+| Test                | Description                                  |
+| ------------------- | -------------------------------------------- |
+| `phone_format`      | Validates `999-999-9999` pattern             |
+| `valid_us_state`    | Checks two-letter US state/Canadian province |
+| `promo_code_format` | Validates promo code structure               |
 
 ---
 
