@@ -15,6 +15,22 @@ REM =======================================
 if not exist logs mkdir logs
 
 REM =======================================
+REM Retain only the 5 most recent log files
+REM =======================================
+
+pushd logs
+
+set count=0
+for /f "delims=" %%F in ('dir /b /o-d *.log') do (
+    set /a count+=1
+    if !count! GTR 5 (
+        del "%%F"
+    )
+)
+
+popd
+
+REM =======================================
 REM Define log file path
 REM =======================================
 
