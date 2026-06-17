@@ -1,6 +1,6 @@
 # dbt Retail Pipeline
 
-A production-style dbt project built on PostgreSQL, demonstrating a full analytics engineering workflow across isolated dev, QA, and production environments — all running locally via Docker.
+A production-style dbt project built on PostgreSQL, demonstrating a full analytics engineering workflow across isolated dev, QA, and production environments — all running locally via Docker
 
 ---
 
