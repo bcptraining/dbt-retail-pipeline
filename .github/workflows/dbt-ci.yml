@@ -4,102 +4,86 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - main
       - develop
   pull_request:
     branches:
-      - main
       - develop
 
-permissions:
-  contents: read
-
 jobs:
-  dbt-build:
-    name: dbt-build
+  dbt-ci:
+    name: Run dbt CI
     runs-on: ubuntu-latest
+
     env:
-      DEV_DB_PASSWORD: ${{ secrets.DEV_DB_PASSWORD || format('ci-{0}', github.run_id) }}
-      QA_DB_PASSWORD: ${{ secrets.QA_DB_PASSWORD || format('ci-{0}', github.run_id) }}
-      PROD_DB_PASSWORD: ${{ secrets.PROD_DB_PASSWORD || format('ci-{0}', github.run_id) }}
-      DBT_USER: ci
+      DBT_PROFILES_DIR: ./
+      DEV_DB_PASSWORD: ${{ secrets.DEV_DB_PASSWORD }}
+      PROD_DB_PASSWORD: ${{ secrets.PROD_DB_PASSWORD }}
 
     steps:
-      - name: Initialize check run
-        uses: actions/github-script@v7
-        with:
-          script: |
-            core.startGroup('dbt-build')
-            core.info('Starting dbt CI check run')
-            core.endGroup()
-
-      - name: Checkout repo
+      # -----------------------------
+      # Checkout & Python Setup
+      # -----------------------------
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: "3.11"
+          cache: "pip"
 
-      - name: Install dbt
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install "dbt-core<2.0.0" "dbt-postgres<2.0.0"
+          pip install -r requirements.txt
 
-      - name: Verify dbt executable
-        run: |
-          which dbt || true
-          dbt --version
-          python --version
-          pip --version
+      # -----------------------------
+      # dbt Dependencies
+      # -----------------------------
+      - name: Install dbt packages
+        run: dbt deps
 
-      - name: Create dbt profile
-        run: |
-          mkdir -p ~/.dbt
-          cp profiles.yml.example ~/.dbt/profiles.yml
-
-      - name: Start local Postgres
-        run: |
-          docker compose up -d pg_dev
-
-      - name: Wait for Postgres to be ready
-        shell: bash
-        run: |
-          ready=0
-          for i in {1..30}; do
-            if docker exec pg_dev pg_isready -U dbt_user -d retail_dev; then
-              echo "Postgres is ready"
-              ready=1
-              break
-            fi
-            echo "Waiting for Postgres..."
-            sleep 2
-          done
-
-          if [ "$ready" -ne 1 ]; then
-            echo "Postgres did not become ready within the allotted time" >&2
-            exit 1
-          fi
-
-      - name: Run dbt build
-        run: |
-          dbt debug --target dev
-          dbt build --target dev
-
-      - name: Upload dbt artifacts (logs + target)
-        if: always()
-        uses: actions/upload-artifact@v4
+      # -----------------------------
+      # Initialize Check Run
+      # -----------------------------
+      - name: Initialize check run
+        uses: actions/github-script@v7
         with:
-          name: dbt-artifacts
-          path: |
-            logs
-            target
+          script: |
+            core.notice('dbt CI started')
 
-      - name: Mark CI as complete
-        run: echo "CI completed successfully"
+      # -----------------------------
+      # dbt Build
+      # -----------------------------
+      - name: Run dbt build
+        run: dbt build --profiles-dir . --target dev
 
-      - name: Finalize check run
+      # -----------------------------
+      # Success Handler
+      # -----------------------------
+      - name: Finalize check run (success)
+        if: ${{ success() }}
         uses: actions/github-script@v7
         with:
           script: |
             core.notice('dbt CI completed successfully')
+
+      # -----------------------------
+      # Failure Handler
+      # -----------------------------
+      - name: Finalize check run (failure)
+        if: ${{ failure() }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            core.error('dbt CI failed — review logs for details')
+
+      # -----------------------------
+      # Always-Run Final Log
+      # -----------------------------
+      - name: Finalize check run (always)
+        if: ${{ always() }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            core.info('dbt CI workflow finished (success, failure, or cancelled)')

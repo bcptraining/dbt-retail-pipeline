@@ -115,8 +115,9 @@ seeds:
         tests:
           - not_null
           - relationships:
-              to: ref('orders_seed')
-              field: order_id
+              arguments:
+                to: ref('orders_seed')
+                field: order_id
       - name: product_id
         description: "Foreign key to products_seed. Identifies the product purchased on this line."
         tests:
@@ -348,8 +349,9 @@ seeds:
         description: "Foreign key to customers_seed. Null for unauthenticated (anonymous) sessions."
         tests:
           - relationships:
-              to: ref('customers_seed')
-              field: customer_id
+              arguments:
+                to: ref('customers_seed')
+                field: customer_id
       - name: session_date
         description: "Date the browsing session occurred."
         tests:
