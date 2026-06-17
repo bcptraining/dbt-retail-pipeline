@@ -74,14 +74,16 @@ seeds:
         description: "Foreign key to products_seed. Identifies the product whose stock is being tracked."
         tests:
           - relationships:
-              to: ref('products_seed')
-              field: product_id
+              arguments:
+                to: ref('products_seed')
+                field: product_id
       - name: store_id
         description: "Foreign key to stores_seed. Identifies the store location holding this stock."
         tests:
           - relationships:
-              to: ref('stores_seed')
-              field: store_id
+              arguments:
+                to: ref('stores_seed')
+                field: store_id
       - name: quantity_on_hand
         description: "Current number of units available at the store location."
       - name: reorder_level
@@ -120,8 +122,9 @@ seeds:
         tests:
           - not_null
           - relationships:
-              to: ref('products_seed')
-              field: product_id
+              arguments:
+                to: ref('products_seed')
+                field: product_id
       - name: quantity
         description: "Number of units of the product purchased on this line item."
         tests:
@@ -157,15 +160,17 @@ seeds:
         tests:
           - not_null
           - relationships:
-              to: ref('customers_seed')
-              field: customer_id
+              arguments:  
+                to: ref('customers_seed')
+                field: customer_id
       - name: store_id
         description: "Foreign key to stores_seed. Identifies the store or channel that fulfilled the order."
         tests:
           - not_null
           - relationships:
-              to: ref('stores_seed')
-              field: store_id
+              arguments:
+                to: ref('stores_seed')
+                field: store_id
       - name: order_date
         description: "Date the order was placed by the customer."
         tests:
@@ -208,8 +213,9 @@ seeds:
         tests:
           - not_null
           - relationships:
-              to: ref('orders_seed')
-              field: order_id
+              arguments:
+                to: ref('orders_seed')
+                field: order_id
       - name: payment_date
         description: "Date the payment was processed."
         tests:
