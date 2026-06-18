@@ -21,6 +21,7 @@ jobs:
 
     env:
       DBT_PROFILES_DIR: .github/profiles
+      DBT_USER: ${{ secrets.DBT_USER }}
       DEV_DB_PASSWORD: ${{ secrets.DEV_DB_PASSWORD }}
       QA_DB_PASSWORD: ${{ secrets.QA_DB_PASSWORD }}
       PROD_DB_PASSWORD: ${{ secrets.PROD_DB_PASSWORD }}

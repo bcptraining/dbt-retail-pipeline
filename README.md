@@ -31,15 +31,69 @@ Schema naming behavior (controlled by `macros/generate_schema_name.sql`):
 - **dev** — schemas are prefixed with the developer's target schema (e.g., `coryp_staging`, `coryp_facts`) to prevent collisions if multiple developers share the server
 - **qa / prod** — schemas use clean layer names only (`staging`, `dimensions`, `facts`, `raw`)
 
+## Schema Naming Strategy (Enterprise dbt Best Practice)
+
+This project follows dbt Labs’ recommended pattern for developer‑specific schemas in dev and shared schemas in QA/Prod.
+
+### Why developer-specific schemas?
+
+From the official dbt documentation:
+
+> “If you have multiple dbt users writing code, it often makes sense for each user to have their own development environment.  
+> A pattern we've found useful is to set your dev target schema to be dbt\_<username>.”  
+> — dbt Labs, Managing Environments  
+> https://docs.getdbt.com/docs/deploy/deploy-environments
+
+### How this project implements it
+
+| Environment | Database    | Schema Behavior                                   |
+| ----------- | ----------- | ------------------------------------------------- |
+| dev         | retail_dev  | Each developer uses their own schema via DBT_USER |
+| qa          | retail_qa   | Shared schema: retail                             |
+| prod        | retail_prod | Shared schema: retail                             |
+
+### Developer workflow
+
+Each developer sets:
+
+```bash
+export DBT_USER=<your_username>
+
+
+Examples:
+
+DBT_USER=coryp → builds into retail_dev.coryp.staging, retail_dev.coryp.marts, etc.
+DBT_USER=jdoe → builds into retail_dev.jdoe.staging, etc.
+DBT_USER=alex_smith → builds into retail_dev.alex_smith.marts, etc.
+
+This ensures complete isolation between developers working in parallel.
+
+###CI workflow
+GitHub Actions uses:
+DBT_USER=ci
+
+This ensures:
+
+CI builds never collide with developer builds
+
+CI has a stable, predictable schema (retail_dev.ci.*)
+
+PR validation is isolated and reproducible
+
+No developer-specific assumptions leak into automated builds
+
+Code
 ---
 
 ## Branch & Deployment Strategy
 
 ```
-feature/xyz  ──►  develop  ──►  main
-    │                │             │
-   dev              qa           prod
-```
+
+feature/xyz ──► develop ──► main
+│ │ │
+dev qa prod
+
+````
 
 | Branch      | Target Environment | Trigger                                 |
 | ----------- | ------------------ | --------------------------------------- |
@@ -83,7 +137,7 @@ feature/xyz  ──►  develop  ──►  main
 
 ```bash
 docker compose up -d
-```
+````
 
 ### Configure credentials
 
