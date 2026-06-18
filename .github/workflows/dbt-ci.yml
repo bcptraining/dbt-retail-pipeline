@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      DBT_PROFILES_DIR: ./
+      DBT_PROFILES_DIR: .github/profiles
       DEV_DB_PASSWORD: ${{ secrets.DEV_DB_PASSWORD }}
       QA_DB_PASSWORD: ${{ secrets.QA_DB_PASSWORD }}
       PROD_DB_PASSWORD: ${{ secrets.PROD_DB_PASSWORD }}
@@ -72,7 +72,7 @@ jobs:
           echo "Running dbt build with target: \"$TARGET\""  
 
           set -o pipefail
-          dbt build --profiles-dir . --target "$TARGET" | tee dbt_output.log
+          dbt build --profiles-dir .github/profiles --target "$TARGET" | tee dbt_output.log
 
       # -----------------------------
       # Upload Logs
