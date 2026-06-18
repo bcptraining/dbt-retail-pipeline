@@ -151,6 +151,6 @@ The `logs/` folder is created automatically if it doesn't exist. Log files are e
 
 ---
 
-## Good Idea Pile
+## Good Idea Pile:
 
 - [About dbt Wizard CLI | dbt Developer Hub](https://docs.getdbt.com/docs/dbt-ai/about-dbt-wizard-cli?version=2.0&name=Fusion)
