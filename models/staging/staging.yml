@@ -38,7 +38,8 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: ["premium", "standard", "budget"]
+              arguments:
+                values: ["premium", "standard", "budget"]
 
   - name: stg_orders
     description: >
@@ -74,13 +75,15 @@ models:
         description: "Fulfillment status. Lowercased: 'completed' | 'shipped' | 'cancelled' | 'returned'."
         tests:
           - accepted_values:
-              values: ["completed", "shipped", "cancelled", "returned"]
+              arguments:
+                values: ["completed", "shipped", "cancelled", "returned"]
       - name: channel
         description: "Sales channel: 'web' | 'store' | 'mobile'."
         tests:
           - not_null
           - accepted_values:
-              values: ["web", "store", "mobile"]
+              arguments:
+                values: ["web", "store", "mobile"]
       - name: promo_code
         description: "Promotional code applied at checkout. Nullable."
         tests:
@@ -154,14 +157,15 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values:
-                ["credit_card", "debit_card", "cash", "paypal", "store_credit"]
+              arguments:
+                values: ["credit_card", "debit_card", "cash", "paypal", "store_credit"]
       - name: payment_status
         description: "Payment status. Lowercased: 'pending' | 'completed' | 'refunded' | 'voided'."
         tests:
           - not_null
           - accepted_values:
-              values: ["pending", "completed", "refunded", "voided"]
+              arguments:
+                values: ["pending", "completed", "refunded", "voided"]
       - name: payment_amount
         description: "Total dollar amount of this payment transaction (numeric). Renamed from 'amount'."
         tests:
@@ -185,17 +189,16 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values:
-                [
-                  "footwear",
-                  "electronics",
-                  "apparel",
-                  "sports",
-                  "accessories",
-                  "furniture",
-                  "home appliances",
-                  "personal care",
-                ]
+              arguments:
+                values:
+                  - "footwear"
+                  - "electronics"
+                  - "apparel"
+                  - "sports"
+                  - "accessories"
+                  - "furniture"
+                  - "home appliances"
+                  - "personal care"
       - name: subcategory
         description: "Secondary classification within a category. Lowercased."
       - name: brand
@@ -228,7 +231,8 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: ["physical", "online", "mobile"]
+              arguments:
+                values: ["physical", "online", "mobile"]
       - name: city
         description: "City of store location. Null for online and mobile stores."
       - name: state
@@ -307,16 +311,18 @@ models:
         description: "Marketing channel: 'organic_search' | 'direct' | 'email' | 'paid_search' | 'social_media'."
         tests:
           - accepted_values:
-              values:
-                - "organic_search"
-                - "direct"
-                - "email"
-                - "paid_search"
-                - "social_media"
+              arguments:
+                values:
+                  - "organic_search"
+                  - "direct"
+                  - "email"
+                  - "paid_search"
+                  - "social_media"
       - name: device_type
         description: "Device used: 'desktop' | 'mobile' | 'tablet'."
         tests:
           - accepted_values:
-              values: ["desktop", "mobile", "tablet"]
+              arguments:
+                values: ["desktop", "mobile", "tablet"]
       - name: converted
         description: "Whether the session resulted in a purchase. Cast to boolean."

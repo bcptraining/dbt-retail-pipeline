@@ -15,10 +15,12 @@ models:
         tests:
           - not_null
           - unique
+
       - name: order_id
         description: "Foreign key to fct_orders."
         tests:
           - not_null
+
       - name: customer_id
         description: "Foreign key to dim_customers."
         tests:
@@ -53,42 +55,58 @@ models:
                 field: date_key
       - name: order_year
         description: "Derived from order_date. Extracted year of the order. Useful for partitioning and time-based analysis."
+
       - name: order_status
         description: "Degenerate dimension. Fulfillment status of the parent order."
+
       - name: channel
         description: "Degenerate dimension. Sales channel: 'web' | 'store' | 'mobile'."
+
       - name: promo_code
         description: "Degenerate dimension. Promotional code applied at checkout. Nullable."
+
       - name: customer_segment
         description: "Denormalized from dim_customers. 'premium' | 'standard' | 'budget'."
+
       - name: product_category
         description: "Denormalized from dim_products."
+
       - name: product_subcategory
         description: "Denormalized from dim_products."
+
       - name: product_brand
         description: "Denormalized from dim_products."
+
       - name: store_type
         description: "Denormalized from dim_stores."
+
       - name: store_country
         description: "Denormalized from dim_stores."
+
       - name: quantity
         description: "Number of units purchased on this line."
         tests:
           - not_null
+
       - name: unit_price
         description: "Price per unit charged at time of sale."
         tests:
           - not_null
+
       - name: discount_amount
         description: "Total dollar discount applied to this line item."
         tests:
           - not_null
+
       - name: gross_amount
         description: "Derived: quantity * unit_price. Revenue before discounts."
+
       - name: net_amount
         description: "Derived: (quantity * unit_price) - discount_amount. Revenue after discounts."
+
       - name: unit_margin
         description: "Derived: unit_price - cost_price. Profit per unit before discount."
+
       - name: net_margin
         description: "Derived: (quantity * (unit_price - cost_price)) - discount_amount. Net profit on the line."
 
@@ -105,6 +123,7 @@ models:
         tests:
           - not_null
           - unique
+
       - name: customer_id
         description: "Foreign key to dim_customers."
         tests:
@@ -131,26 +150,37 @@ models:
                 field: date_key
       - name: order_status
         description: "Fulfillment status: 'completed' | 'shipped' | 'cancelled' | 'returned'."
+
       - name: channel
         description: "Sales channel: 'web' | 'store' | 'mobile'."
+
       - name: promo_code
         description: "Promotional code applied at checkout. Nullable."
+
       - name: customer_segment
         description: "Denormalized from dim_customers."
+
       - name: store_type
         description: "Denormalized from dim_stores."
+
       - name: store_country
         description: "Denormalized from dim_stores."
+
       - name: line_item_count
         description: "Number of distinct line items in the order."
+
       - name: total_quantity
         description: "Sum of units purchased across all line items."
+
       - name: total_gross_amount
         description: "Sum of gross_amount across all line items. Revenue before discounts."
+
       - name: total_discount_amount
         description: "Sum of discount_amount across all line items."
+
       - name: total_net_amount
         description: "Sum of net_amount across all line items. Revenue after discounts."
+
       - name: total_net_margin
         description: "Sum of net_margin across all line items. Total profit on the order."
 
@@ -167,6 +197,7 @@ models:
         tests:
           - not_null
           - unique
+
       - name: order_id
         description: "Foreign key to fct_orders."
         tests:
@@ -201,16 +232,21 @@ models:
                 field: date_key
       - name: payment_method
         description: "Degenerate dimension. 'credit_card' | 'debit_card' | 'cash' | 'paypal' | 'store_credit'."
+
       - name: payment_status
         description: "Degenerate dimension. 'pending' | 'completed' | 'refunded' | 'voided'."
+
       - name: channel
         description: "Degenerate dimension. Sales channel of the parent order."
+
       - name: customer_segment
         description: "Denormalized from dim_customers."
+
       - name: payment_amount
         description: "Dollar amount of this payment transaction."
         tests:
           - not_null
+
       - name: days_to_payment
         description: "Derived: payment_date - order_date. Days between order placement and payment settlement."
 
@@ -229,6 +265,7 @@ models:
         tests:
           - not_null
           - unique
+
       - name: customer_id
         description: "Foreign key to dim_customers. Null for unauthenticated sessions."
         tests:
@@ -253,20 +290,28 @@ models:
                 field: date_key
       - name: channel
         description: "Degenerate dimension. Marketing channel: 'organic_search' | 'direct' | 'email' | 'paid_search' | 'social_media'."
+
       - name: device_type
         description: "Degenerate dimension. Device used: 'desktop' | 'mobile' | 'tablet'."
+
       - name: customer_segment
         description: "Denormalized from dim_customers. Null for unauthenticated sessions."
+
       - name: product_category_viewed
         description: "Denormalized from dim_products. Null if no product was viewed."
+
       - name: product_subcategory_viewed
         description: "Denormalized from dim_products. Null if no product was viewed."
+
       - name: product_brand_viewed
         description: "Denormalized from dim_products. Null if no product was viewed."
+
       - name: pages_viewed
         description: "Number of pages viewed during the session."
+
       - name: converted
         description: "Whether the session resulted in a purchase. Boolean."
+
       - name: converted_flag
         description: "Derived: converted cast to integer (1/0). Use for SUM-based conversion rate calculations."
 
@@ -289,6 +334,7 @@ models:
         tests:
           - not_null
           - unique
+
       - name: product_id
         description: "Foreign key to dim_products."
         tests:
@@ -315,33 +361,46 @@ models:
                 field: date_key
       - name: product_name
         description: "Denormalized from dim_products."
+
       - name: product_category
         description: "Denormalized from dim_products."
+
       - name: product_subcategory
         description: "Denormalized from dim_products."
+
       - name: product_brand
         description: "Denormalized from dim_products."
+
       - name: cost_price
         description: "Denormalized from dim_products. Unit cost used for inventory valuation."
+
       - name: store_name
         description: "Denormalized from dim_stores."
+
       - name: store_type
         description: "Denormalized from dim_stores."
+
       - name: store_city
         description: "Denormalized from dim_stores."
+
       - name: store_state
         description: "Denormalized from dim_stores."
+
       - name: quantity_on_hand
         description: "Current units in stock at this store for this product."
         tests:
           - not_null
+
       - name: reorder_level
         description: "Threshold below which a restock should be triggered."
         tests:
           - not_null
+
       - name: below_reorder_flag
         description: "Derived: 1 if quantity_on_hand < reorder_level, else 0."
+
       - name: units_needed
         description: "Derived: MAX(reorder_level - quantity_on_hand, 0). Units required to reach reorder level."
+
       - name: inventory_value
         description: "Derived: quantity_on_hand * cost_price. Total cost value of stock on hand."

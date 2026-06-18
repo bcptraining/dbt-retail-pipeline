@@ -1,84 +1,59 @@
 @echo off
-setlocal EnableDelayedExpansion
+setlocal enabledelayedexpansion
 
 REM =======================================
-REM Generate timestamp and day-of-week
+REM Multi‑Environment dbt Build Script
+REM Usage:  run_dbt_build.bat dev
+REM         run_dbt_build.bat qa
+REM         run_dbt_build.bat prod
 REM =======================================
 
-for /f %%x in ('powershell -NoProfile -Command "(Get-Date).ToString('yyyyMMdd-HHmm')"') do set timestamp=%%x
-for /f %%x in ('powershell -NoProfile -Command "(Get-Date).ToString('ddd').ToUpper()"') do set dow=%%x
-
-REM =======================================
-REM Ensure logs directory exists
-REM =======================================
-
-if not exist logs mkdir logs
-
-REM =======================================
-REM Retain only the 5 most recent log files
-REM =======================================
-
-pushd logs
-
-set count=0
-for /f "delims=" %%F in ('dir /b /o-d *.log') do (
-    set /a count+=1
-    if !count! GTR 5 (
-        del "%%F"
-    )
+REM ---- Validate input ----
+if "%1"=="" (
+    echo ERROR: No environment specified.
+    echo Usage: run_dbt_build.bat dev ^| qa ^| prod
+    exit /b 1
 )
 
-popd
+set ENV=%1
 
-REM =======================================
-REM Define log file path
-REM =======================================
+REM ---- Validate allowed environments ----
+if /I "%ENV%"=="dev"  goto ok
+if /I "%ENV%"=="qa"   goto ok
+if /I "%ENV%"=="prod" goto ok
 
-set logfile=logs\dbt_build_%dow%_%timestamp%.log
+echo ERROR: Invalid environment "%ENV%".
+echo Allowed values: dev, qa, prod
+exit /b 1
 
-REM =======================================
-REM Move to script directory
-REM =======================================
+:ok
 
-cd /d "%~dp0"
+REM ---- Timestamp for logs (locale-independent) ----
+for /f %%i in ('powershell -NoProfile -Command "Get-Date -Format ''yyyyMMdd''"') do set "YYYYMMDD=%%i"
+for /f %%i in ('powershell -NoProfile -Command "Get-Date -Format ''HHmm''"') do set "HHMM=%%i"
 
-REM =======================================
-REM Run dbt build and capture output
-REM =======================================
+REM ---- Ensure logs directory exists ----
+if not exist "logs" (
+    mkdir "logs"
+)
 
-(
+set LOGFILE=logs\dbt_build_%ENV%_%YYYYMMDD%_%HHMM%.log
+
 echo =======================================
-echo Starting dbt build workflow ...
-echo Project: DBT-RETAIL-PIPELINE
-echo Timestamp: %timestamp%
+echo Starting dbt build workflow...
+echo Environment: %ENV%
+echo Log file: %LOGFILE%
 echo =======================================
-echo.
 
-dbt build
+REM ---- Run dbt ----
+dbt build --target %ENV% > "%LOGFILE%" 2>&1
 
-echo.
+REM ---- Capture dbt exit code before endlocal ----
+set "DBT_EXIT_CODE=%ERRORLEVEL%"
+
 echo =======================================
-echo dbt build finished.
+echo Build complete for environment: %ENV%
+echo Log saved to: %LOGFILE%
 echo =======================================
-echo.
-) > "%logfile%" 2>&1
 
-REM =======================================
-REM Capture exit code AFTER the block
-REM =======================================
-
-set "dbt_exit_code=%ERRORLEVEL%"
-
-REM =======================================
-REM Show log file path
-REM =======================================
-
-echo Log saved to "%logfile%"
-
-REM =======================================
-REM Pause only when running locally
-REM =======================================
-
-if "%CI%"=="" pause
-
-exit /b "%dbt_exit_code%"
+endlocal & exit /b %DBT_EXIT_CODE%
