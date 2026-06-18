@@ -29,8 +29,14 @@ exit /b 1
 :ok
 
 REM ---- Timestamp for logs (locale-independent) ----
-for /f %%i in ('powershell -NoProfile -Command "Get-Date -Format ''yyyyMMdd''"') do set "YYYYMMDD=%%i"
-for /f %%i in ('powershell -NoProfile -Command "Get-Date -Format ''HHmm''"') do set "HHMM=%%i"
+
+for /f "tokens=1-2 delims==" %%a in ('wmic os get LocalDateTime /value') do (
+    if "%%a"=="LocalDateTime" set ldt=%%b
+)
+
+set YYYYMMDD=%ldt:~0,8%
+set HHMM=%ldt:~8,4%
+
 
 REM ---- Ensure logs directory exists ----
 if not exist "logs" (
