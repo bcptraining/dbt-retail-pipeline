@@ -3,15 +3,15 @@ setlocal enabledelayedexpansion
 
 REM =======================================
 REM Multi‑Environment dbt Build Script
-REM Usage:  dbt_build.bat dev
-REM         dbt_build.bat qa
-REM         dbt_build.bat prod
+REM Usage:  run_dbt_build.bat dev
+REM         run_dbt_build.bat qa
+REM         run_dbt_build.bat prod
 REM =======================================
 
 REM ---- Validate input ----
 if "%1"=="" (
     echo ERROR: No environment specified.
-    echo Usage: dbt_build.bat dev ^| qa ^| prod
+    echo Usage: run_dbt_build.bat dev ^| qa ^| prod
     exit /b 1
 )
 
@@ -28,12 +28,13 @@ exit /b 1
 
 :ok
 
-REM ---- Timestamp for logs ----
-for /f "tokens=1-3 delims=/ " %%a in ("%date%") do (
-    set YYYYMMDD=%%c%%a%%b
-)
-for /f "tokens=1-2 delims=: " %%a in ("%time%") do (
-    set HHMM=%%a%%b
+REM ---- Timestamp for logs (locale-independent) ----
+for /f %%i in ('powershell -NoProfile -Command "Get-Date -Format ''yyyyMMdd''"') do set "YYYYMMDD=%%i"
+for /f %%i in ('powershell -NoProfile -Command "Get-Date -Format ''HHmm''"') do set "HHMM=%%i"
+
+REM ---- Ensure logs directory exists ----
+if not exist "logs" (
+    mkdir "logs"
 )
 
 set LOGFILE=logs\dbt_build_%ENV%_%YYYYMMDD%_%HHMM%.log
@@ -47,10 +48,12 @@ echo =======================================
 REM ---- Run dbt ----
 dbt build --target %ENV% > "%LOGFILE%" 2>&1
 
+REM ---- Capture dbt exit code before endlocal ----
+set "DBT_EXIT_CODE=%ERRORLEVEL%"
 
 echo =======================================
 echo Build complete for environment: %ENV%
 echo Log saved to: %LOGFILE%
 echo =======================================
 
-endlocal
+endlocal & exit /b %DBT_EXIT_CODE%
