@@ -69,12 +69,10 @@ jobs:
             TARGET="dev"
           fi
 
-          echo "Running dbt build with target: $TARGET"
+          echo "Running dbt build with target: \"$TARGET\""  
 
           set -o pipefail
           dbt build --profiles-dir . --target "$TARGET" | tee dbt_output.log
-
-          dbt build --profiles-dir . --target $TARGET | tee dbt_output.log
 
       # -----------------------------
       # Upload Logs
