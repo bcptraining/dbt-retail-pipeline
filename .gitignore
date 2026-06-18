@@ -5,7 +5,7 @@ logs/
 testrun_log.txt
 
 # dbt profile (contains credentials — use env vars or GitHub Secrets instead)
-profiles.yml
+
 
 # Python virtual environment
 .env
