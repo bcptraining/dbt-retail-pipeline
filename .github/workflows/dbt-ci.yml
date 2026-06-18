@@ -1,13 +1,18 @@
 name: dbt CI
 
 on:
-  workflow_dispatch:
   push:
-    branches:
-      - develop
+    branches: [develop]
   pull_request:
-    branches:
-      - develop
+    branches: [develop]
+  workflow_dispatch:
+    inputs:
+      target_env:
+        description: "dbt target to run (manual only)"
+        required: true
+        default: "dev"
+        type: choice
+        options: [dev, qa]
 
 jobs:
   dbt-ci:
@@ -17,6 +22,7 @@ jobs:
     env:
       DBT_PROFILES_DIR: ./
       DEV_DB_PASSWORD: ${{ secrets.DEV_DB_PASSWORD }}
+      QA_DB_PASSWORD: ${{ secrets.QA_DB_PASSWORD }}
       PROD_DB_PASSWORD: ${{ secrets.PROD_DB_PASSWORD }}
 
     steps:
@@ -49,14 +55,31 @@ jobs:
       - name: Initialize check run
         uses: actions/github-script@v7
         with:
-          script: |
-            core.notice('dbt CI started')
+          script: core.notice('dbt CI started')
 
       # -----------------------------
-      # dbt Build
+      # dbt Build (Environment-Aware)
       # -----------------------------
       - name: Run dbt build
-        run: dbt build --profiles-dir . --target dev
+        run: |
+          # Determine target environment
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            TARGET="${{ github.event.inputs.target_env }}"
+          else
+            TARGET="dev"
+          fi
+
+          echo "Running dbt build with target: $TARGET"
+          dbt build --profiles-dir . --target $TARGET | tee dbt_output.log
+
+      # -----------------------------
+      # Upload Logs
+      # -----------------------------
+      - name: Upload dbt log
+        uses: actions/upload-artifact@v4
+        with:
+          name: dbt-log
+          path: dbt_output.log
 
       # -----------------------------
       # Success Handler
@@ -65,8 +88,7 @@ jobs:
         if: ${{ success() }}
         uses: actions/github-script@v7
         with:
-          script: |
-            core.notice('dbt CI completed successfully')
+          script: core.notice('dbt CI completed successfully')
 
       # -----------------------------
       # Failure Handler
@@ -75,8 +97,7 @@ jobs:
         if: ${{ failure() }}
         uses: actions/github-script@v7
         with:
-          script: |
-            core.error('dbt CI failed — review logs for details')
+          script: core.error('dbt CI failed — review logs for details')
 
       # -----------------------------
       # Always-Run Final Log
@@ -85,5 +106,4 @@ jobs:
         if: ${{ always() }}
         uses: actions/github-script@v7
         with:
-          script: |
-            core.info('dbt CI workflow finished (success, failure, or cancelled)')
+          script: core.info('dbt CI workflow finished')

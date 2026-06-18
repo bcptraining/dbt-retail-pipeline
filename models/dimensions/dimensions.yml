@@ -34,7 +34,8 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: ["premium", "standard", "budget"]
+              arguments:
+                values: ["premium", "standard", "budget"]
 
   - name: dim_products
     description: >
@@ -83,7 +84,8 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: ["physical", "online", "mobile"]
+              arguments:
+                values: ["physical", "online", "mobile"]
       - name: city
         description: "City of store location. Null for online and mobile stores."
       - name: state
