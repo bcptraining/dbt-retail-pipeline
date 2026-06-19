@@ -11,35 +11,43 @@ models:
         tests:
           - not_null
           - unique
+
       - name: first_name
         description: "Customer's given name."
+
       - name: last_name
         description: "Customer's family name."
+
       - name: email
         description: "Customer's email address."
+
       - name: phone
         description: "Customer's contact phone number."
         tests:
           - phone_format
+
       - name: city
         description: "City of the customer's primary address."
+
       - name: state
         description: "Two-letter US state or Canadian province abbreviation. Uppercase."
         tests:
           - valid_us_state
+
       - name: country
         description: "Country of the customer's primary address. Uppercase ISO-style: USA, Canada, UK."
+
       - name: signup_date
         description: "Date the customer registered their account."
         tests:
           - not_null
+
       - name: customer_segment
         description: "Tier-based value segment. Lowercased: 'premium' | 'standard' | 'budget'."
         tests:
           - not_null
           - accepted_values:
-              arguments:
-                values: ["premium", "standard", "budget"]
+              values: ["premium", "standard", "budget"]
 
   - name: stg_orders
     description: >
@@ -51,39 +59,41 @@ models:
         tests:
           - not_null
           - unique
+
       - name: customer_id
         description: "Foreign key to stg_customers."
         tests:
           - not_null
           - relationships:
-              arguments:
-                to: ref('stg_customers')
-                field: customer_id
+              to: ref('stg_customers')
+              field: customer_id
+
       - name: store_id
         description: "Foreign key to stg_stores."
         tests:
           - not_null
           - relationships:
-              arguments:
-                to: ref('stg_stores')
-                field: store_id
+              to: ref('stg_stores')
+              field: store_id
+
       - name: order_date
         description: "Date the order was placed."
         tests:
           - not_null
+
       - name: order_status
         description: "Fulfillment status. Lowercased: 'completed' | 'shipped' | 'cancelled' | 'returned'."
         tests:
           - accepted_values:
-              arguments:
-                values: ["completed", "shipped", "cancelled", "returned"]
+              values: ["completed", "shipped", "cancelled", "returned"]
+
       - name: channel
         description: "Sales channel: 'web' | 'store' | 'mobile'."
         tests:
           - not_null
           - accepted_values:
-              arguments:
-                values: ["web", "store", "mobile"]
+              values: ["web", "store", "mobile"]
+
       - name: promo_code
         description: "Promotional code applied at checkout. Nullable."
         tests:
@@ -92,39 +102,41 @@ models:
   - name: stg_order_items
     description: >
       Staged order line-item records. unit_price and discount_amount cast to
-      numeric (source seed was incorrectly typed as integer). Adds line_total
-      as a convenience derived column.
+      numeric. Adds line_total as a convenience derived column.
     columns:
       - name: order_item_id
         description: "Primary key. Unique integer identifier for each line item."
         tests:
           - not_null
           - unique
+
       - name: order_id
         description: "Foreign key to stg_orders."
         tests:
           - not_null
           - relationships:
-              arguments:
-                to: ref('stg_orders')
-                field: order_id
+              to: ref('stg_orders')
+              field: order_id
+
       - name: product_id
         description: "Foreign key to stg_products."
         tests:
           - not_null
           - relationships:
-              arguments:
-                to: ref('stg_products')
-                field: product_id
+              to: ref('stg_products')
+              field: product_id
+
       - name: quantity
         description: "Number of units purchased on this line."
         tests:
           - not_null
+
       - name: unit_price
         description: "Price per unit charged at time of sale (numeric)."
         tests:
           - not_null
           - price_positive
+
       - name: discount_amount
         description: "Total dollar discount applied to this line item (numeric)."
         tests:
@@ -140,107 +152,119 @@ models:
         tests:
           - not_null
           - unique
+
       - name: order_id
         description: "Foreign key to stg_orders."
         tests:
           - not_null
           - relationships:
-              arguments:
-                to: ref('stg_orders')
-                field: order_id
+              to: ref('stg_orders')
+              field: order_id
+
       - name: payment_date
         description: "Date the payment was processed."
         tests:
           - not_null
+
       - name: payment_method
-        description: "Payment method: 'credit_card' | 'debit_card' | 'cash' | 'paypal' | 'store_credit'."
+        description: "Payment method."
         tests:
           - not_null
           - accepted_values:
-              arguments:
-                values: ["credit_card", "debit_card", "cash", "paypal", "store_credit"]
+              values:
+                ["credit_card", "debit_card", "cash", "paypal", "store_credit"]
+
       - name: payment_status
-        description: "Payment status. Lowercased: 'pending' | 'completed' | 'refunded' | 'voided'."
+        description: "Payment status."
         tests:
           - not_null
           - accepted_values:
-              arguments:
-                values: ["pending", "completed", "refunded", "voided"]
+              values: ["pending", "completed", "refunded", "voided"]
+
       - name: payment_amount
-        description: "Total dollar amount of this payment transaction (numeric). Renamed from 'amount'."
+        description: "Total dollar amount of this payment transaction (numeric)."
         tests:
           - not_null
 
   - name: stg_products
     description: >
       Staged product catalog records. category and subcategory normalized to
-      lowercase. unit_price and cost_price cast to numeric (source seed was
-      incorrectly typed as integer).
+      lowercase. unit_price and cost_price cast to numeric.
     columns:
       - name: product_id
         description: "Primary key. Unique integer identifier for each product."
         tests:
           - not_null
           - unique
+
       - name: product_name
         description: "Human-readable product name."
+
       - name: category
-        description: "Top-level product classification. Lowercased: 'electronics' | 'apparel' | 'footwear' | etc."
+        description: "Top-level product classification. Lowercased."
         tests:
           - not_null
           - accepted_values:
-              arguments:
-                values:
-                  - "footwear"
-                  - "electronics"
-                  - "apparel"
-                  - "sports"
-                  - "accessories"
-                  - "furniture"
-                  - "home appliances"
-                  - "personal care"
+              values:
+                - footwear
+                - electronics
+                - apparel
+                - sports
+                - accessories
+                - furniture
+                - home appliances
+                - personal care
+
       - name: subcategory
         description: "Secondary classification within a category. Lowercased."
+
       - name: brand
         description: "Manufacturer or brand name."
+
       - name: unit_price
         description: "Catalog retail price per unit in dollars (numeric)."
         tests:
           - not_null
           - price_positive
+
       - name: cost_price
-        description: "Wholesale cost per unit in dollars (numeric). Used for margin calculations."
+        description: "Wholesale cost per unit in dollars (numeric)."
         tests:
           - not_null
           - price_positive
 
   - name: stg_stores
     description: >
-      Staged store master records. No casing changes — store_type is already
-      lowercase in the source. city and state are null for online/mobile stores.
+      Staged store master records. store_type is already lowercase in the source.
+      city and state are null for online/mobile stores.
     columns:
       - name: store_id
         description: "Primary key. Unique integer identifier for each store or channel."
         tests:
           - not_null
           - unique
+
       - name: store_name
         description: "Human-readable store name."
+
       - name: store_type
         description: "Operational format: 'physical' | 'online' | 'mobile'."
         tests:
           - not_null
           - accepted_values:
-              arguments:
-                values: ["physical", "online", "mobile"]
+              values: ["physical", "online", "mobile"]
+
       - name: city
         description: "City of store location. Null for online and mobile stores."
+
       - name: state
         description: "Two-letter US state abbreviation. Uppercase. Null for online/mobile stores."
+
       - name: country
         description: "Country of operation. Uppercase: USA."
         tests:
           - not_null
+
       - name: opened_date
         description: "Date the store opened or channel launched."
         tests:
@@ -248,32 +272,34 @@ models:
 
   - name: stg_inventory
     description: >
-      Staged inventory snapshot records. No transformations needed — all
-      types and values are correct in the source seed.
+      Staged inventory snapshot records. No transformations needed.
     columns:
       - name: inventory_id
         description: "Primary key. Unique integer identifier for each inventory record."
         tests:
           - not_null
           - unique
+
       - name: product_id
         description: "Foreign key to stg_products."
         tests:
           - relationships:
-              arguments:
-                to: ref('stg_products')
-                field: product_id
+              to: ref('stg_products')
+              field: product_id
+
       - name: store_id
         description: "Foreign key to stg_stores."
         tests:
           - relationships:
-              arguments:
-                to: ref('stg_stores')
-                field: store_id
+              to: ref('stg_stores')
+              field: store_id
+
       - name: quantity_on_hand
         description: "Current units available at the store."
+
       - name: reorder_level
         description: "Minimum stock quantity that triggers a restock."
+
       - name: restock_date
         description: "Next scheduled restock date."
 
@@ -287,42 +313,45 @@ models:
         tests:
           - not_null
           - unique
+
       - name: customer_id
         description: "Foreign key to stg_customers. Null for anonymous sessions."
         tests:
           - relationships:
-              arguments:
-                to: ref('stg_customers')
-                field: customer_id
+              to: ref('stg_customers')
+              field: customer_id
+
       - name: session_date
         description: "Date the browsing session occurred."
         tests:
           - not_null
+
       - name: pages_viewed
         description: "Number of pages viewed during the session."
+
       - name: product_id_viewed
-        description: "Product browsed during the session. Foreign key to stg_products."
+        description: "Product browsed during the session."
         tests:
           - relationships:
-              arguments:
-                to: ref('stg_products')
-                field: product_id
+              to: ref('stg_products')
+              field: product_id
+
       - name: channel
-        description: "Marketing channel: 'organic_search' | 'direct' | 'email' | 'paid_search' | 'social_media'."
+        description: "Marketing channel."
         tests:
           - accepted_values:
-              arguments:
-                values:
-                  - "organic_search"
-                  - "direct"
-                  - "email"
-                  - "paid_search"
-                  - "social_media"
+              values:
+                - organic_search
+                - direct
+                - email
+                - paid_search
+                - social_media
+
       - name: device_type
-        description: "Device used: 'desktop' | 'mobile' | 'tablet'."
+        description: "Device used."
         tests:
           - accepted_values:
-              arguments:
-                values: ["desktop", "mobile", "tablet"]
+              values: ["desktop", "mobile", "tablet"]
+
       - name: converted
-        description: "Whether the session resulted in a purchase. Cast to boolean."
+        description: "Whether the session resulted in a purchase."

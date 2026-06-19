@@ -26,47 +26,47 @@ models:
         tests:
           - not_null
           - relationships:
-              arguments:
-                to: ref('dim_customers')
-                field: customer_id
+              to: ref('dim_customers')
+              field: customer_id
+
       - name: product_id
         description: "Foreign key to dim_products."
         tests:
           - not_null
           - relationships:
-              arguments:
-                to: ref('dim_products')
-                field: product_id
+              to: ref('dim_products')
+              field: product_id
+
       - name: store_id
         description: "Foreign key to dim_stores."
         tests:
           - not_null
           - relationships:
-              arguments:
-                to: ref('dim_stores')
-                field: store_id
+              to: ref('dim_stores')
+              field: store_id
+
       - name: date_key
         description: "Order date. Foreign key to dim_date."
         tests:
           - not_null
           - relationships:
-              arguments:
-                to: ref('dim_date')
-                field: date_key
+              to: ref('dim_date')
+              field: date_key
+
       - name: order_year
-        description: "Derived from order_date. Extracted year of the order. Useful for partitioning and time-based analysis."
+        description: "Derived from order_date. Extracted year of the order."
 
       - name: order_status
-        description: "Degenerate dimension. Fulfillment status of the parent order."
+        description: "Fulfillment status of the parent order."
 
       - name: channel
-        description: "Degenerate dimension. Sales channel: 'web' | 'store' | 'mobile'."
+        description: "Sales channel: 'web' | 'store' | 'mobile'."
 
       - name: promo_code
-        description: "Degenerate dimension. Promotional code applied at checkout. Nullable."
+        description: "Promotional code applied at checkout. Nullable."
 
       - name: customer_segment
-        description: "Denormalized from dim_customers. 'premium' | 'standard' | 'budget'."
+        description: "Denormalized from dim_customers."
 
       - name: product_category
         description: "Denormalized from dim_products."
@@ -99,24 +99,24 @@ models:
           - not_null
 
       - name: gross_amount
-        description: "Derived: quantity * unit_price. Revenue before discounts."
+        description: "Derived: quantity * unit_price."
 
       - name: net_amount
-        description: "Derived: (quantity * unit_price) - discount_amount. Revenue after discounts."
+        description: "Derived: (quantity * unit_price) - discount_amount."
 
       - name: unit_margin
-        description: "Derived: unit_price - cost_price. Profit per unit before discount."
+        description: "Derived: unit_price - cost_price."
 
       - name: net_margin
-        description: "Derived: (quantity * (unit_price - cost_price)) - discount_amount. Net profit on the line."
+        description: "Derived: (quantity * (unit_price - cost_price)) - discount_amount."
 
   - name: fct_orders
     description: >
       Order-grain fact view aggregated from fct_order_items. One row per order.
       KPIs supported: order count; average order value (AOV); total revenue
       and net margin per order; discount rate; line items per order; orders
-      by status (completed/shipped/cancelled/returned); promo code attach rate;
-      revenue and order count by channel, store type, customer segment, and date.
+      by status; promo code attach rate; revenue and order count by channel,
+      store type, customer segment, and date.
     columns:
       - name: order_id
         description: "Primary key. Unique integer identifier for each order."
@@ -129,33 +129,33 @@ models:
         tests:
           - not_null
           - relationships:
-              arguments:
-                to: ref('dim_customers')
-                field: customer_id
+              to: ref('dim_customers')
+              field: customer_id
+
       - name: store_id
         description: "Foreign key to dim_stores."
         tests:
           - not_null
           - relationships:
-              arguments:
-                to: ref('dim_stores')
-                field: store_id
+              to: ref('dim_stores')
+              field: store_id
+
       - name: date_key
         description: "Order date. Foreign key to dim_date."
         tests:
           - not_null
           - relationships:
-              arguments:
-                to: ref('dim_date')
-                field: date_key
+              to: ref('dim_date')
+              field: date_key
+
       - name: order_status
-        description: "Fulfillment status: 'completed' | 'shipped' | 'cancelled' | 'returned'."
+        description: "Fulfillment status."
 
       - name: channel
-        description: "Sales channel: 'web' | 'store' | 'mobile'."
+        description: "Sales channel."
 
       - name: promo_code
-        description: "Promotional code applied at checkout. Nullable."
+        description: "Promotional code applied at checkout."
 
       - name: customer_segment
         description: "Denormalized from dim_customers."
@@ -173,24 +173,23 @@ models:
         description: "Sum of units purchased across all line items."
 
       - name: total_gross_amount
-        description: "Sum of gross_amount across all line items. Revenue before discounts."
+        description: "Sum of gross_amount across all line items."
 
       - name: total_discount_amount
         description: "Sum of discount_amount across all line items."
 
       - name: total_net_amount
-        description: "Sum of net_amount across all line items. Revenue after discounts."
+        description: "Sum of net_amount across all line items."
 
       - name: total_net_margin
-        description: "Sum of net_margin across all line items. Total profit on the order."
+        description: "Sum of net_margin across all line items."
 
   - name: fct_payments
     description: >
       Payment fact table at payment grain. One row per payment transaction.
       Joins stg_payments and stg_orders to dim_customers.
-      KPIs supported: payment method mix; refund and void rates; total payment
-      volume by method/channel/segment; average days to payment settlement;
-      customer lifetime payment value.
+      KPIs supported: payment method mix; refund and void rates; payment volume;
+      settlement timing; customer lifetime payment value.
     columns:
       - name: payment_id
         description: "Primary key. Unique integer identifier for each payment."
@@ -203,41 +202,41 @@ models:
         tests:
           - not_null
           - relationships:
-              arguments:
-                to: ref('fct_orders')
-                field: order_id
+              to: ref('fct_orders')
+              field: order_id
+
       - name: customer_id
         description: "Foreign key to dim_customers."
         tests:
           - not_null
           - relationships:
-              arguments:
-                to: ref('dim_customers')
-                field: customer_id
+              to: ref('dim_customers')
+              field: customer_id
+
       - name: store_id
         description: "Foreign key to dim_stores."
         tests:
           - not_null
           - relationships:
-              arguments:
-                to: ref('dim_stores')
-                field: store_id
+              to: ref('dim_stores')
+              field: store_id
+
       - name: date_key
         description: "Payment date. Foreign key to dim_date."
         tests:
           - not_null
           - relationships:
-              arguments:
-                to: ref('dim_date')
-                field: date_key
+              to: ref('dim_date')
+              field: date_key
+
       - name: payment_method
-        description: "Degenerate dimension. 'credit_card' | 'debit_card' | 'cash' | 'paypal' | 'store_credit'."
+        description: "Payment method."
 
       - name: payment_status
-        description: "Degenerate dimension. 'pending' | 'completed' | 'refunded' | 'voided'."
+        description: "Payment status."
 
       - name: channel
-        description: "Degenerate dimension. Sales channel of the parent order."
+        description: "Sales channel of the parent order."
 
       - name: customer_segment
         description: "Denormalized from dim_customers."
@@ -248,17 +247,13 @@ models:
           - not_null
 
       - name: days_to_payment
-        description: "Derived: payment_date - order_date. Days between order placement and payment settlement."
+        description: "Derived: payment_date - order_date."
 
   - name: fct_web_sessions
     description: >
       Web session fact table at session grain. One row per browsing session.
       customer_id and product dimension columns are null for unauthenticated
       sessions or sessions without a product view.
-      KPIs supported: session-to-purchase conversion rate; conversion rate by
-      channel, device type, and customer segment; anonymous vs. authenticated
-      session split; product browse rate (sessions with a product viewed);
-      pages viewed per session; channel and device attribution.
     columns:
       - name: session_id
         description: "Primary key. Unique integer identifier for each session."
@@ -267,67 +262,59 @@ models:
           - unique
 
       - name: customer_id
-        description: "Foreign key to dim_customers. Null for unauthenticated sessions."
+        description: "Foreign key to dim_customers."
         tests:
           - relationships:
-              arguments:
-                to: ref('dim_customers')
-                field: customer_id
+              to: ref('dim_customers')
+              field: customer_id
+
       - name: product_id_viewed
-        description: "Foreign key to dim_products. Null if no product was viewed."
+        description: "Foreign key to dim_products.The column is null when no product is viewed in the session"
         tests:
           - relationships:
-              arguments:
-                to: ref('dim_products')
-                field: product_id
+              to: ref('dim_products')
+              field: product_id
+
       - name: date_key
         description: "Session date. Foreign key to dim_date."
         tests:
           - not_null
           - relationships:
-              arguments:
-                to: ref('dim_date')
-                field: date_key
+              to: ref('dim_date')
+              field: date_key
+
       - name: channel
-        description: "Degenerate dimension. Marketing channel: 'organic_search' | 'direct' | 'email' | 'paid_search' | 'social_media'."
+        description: "Marketing channel."
 
       - name: device_type
-        description: "Degenerate dimension. Device used: 'desktop' | 'mobile' | 'tablet'."
+        description: "Device used."
 
       - name: customer_segment
-        description: "Denormalized from dim_customers. Null for unauthenticated sessions."
+        description: "Denormalized from dim_customers."
 
       - name: product_category_viewed
-        description: "Denormalized from dim_products. Null if no product was viewed."
+        description: "Denormalized from dim_products."
 
       - name: product_subcategory_viewed
-        description: "Denormalized from dim_products. Null if no product was viewed."
+        description: "Denormalized from dim_products."
 
       - name: product_brand_viewed
-        description: "Denormalized from dim_products. Null if no product was viewed."
+        description: "Denormalized from dim_products."
 
       - name: pages_viewed
-        description: "Number of pages viewed during the session."
+        description: "Number of pages viewed."
 
       - name: converted
-        description: "Whether the session resulted in a purchase. Boolean."
+        description: "Whether the session resulted in a purchase."
 
       - name: converted_flag
-        description: "Derived: converted cast to integer (1/0). Use for SUM-based conversion rate calculations."
+        description: "Derived: converted cast to integer."
 
   - name: fct_inventory
     description: >
       Inventory snapshot fact table at product-store grain. One row per
       inventory record. Joins stg_inventory to dim_products and dim_stores.
       Supports stock level monitoring, reorder alerts, and inventory valuation.
-      Unlike the other fact tables which denormalize only analytical bucketing
-      attributes (category, segment, type), this model also carries display-level
-      attributes (product_name, store_name, city, state) because inventory
-      reporting is primarily operational — analysts need readable identifiers
-      without an additional join to locate understocked items.
-      KPIs supported: total units on hand by product/category/brand/store/state;
-      % of SKUs below reorder level; total units needed for restocking; inventory
-      value on hand (quantity * cost_price); restock date tracking.
     columns:
       - name: inventory_id
         description: "Primary key. Unique integer identifier for each inventory record."
@@ -340,25 +327,25 @@ models:
         tests:
           - not_null
           - relationships:
-              arguments:
-                to: ref('dim_products')
-                field: product_id
+              to: ref('dim_products')
+              field: product_id
+
       - name: store_id
         description: "Foreign key to dim_stores."
         tests:
           - not_null
           - relationships:
-              arguments:
-                to: ref('dim_stores')
-                field: store_id
+              to: ref('dim_stores')
+              field: store_id
+
       - name: date_key
         description: "Restock date. Foreign key to dim_date."
         tests:
           - not_null
           - relationships:
-              arguments:
-                to: ref('dim_date')
-                field: date_key
+              to: ref('dim_date')
+              field: date_key
+
       - name: product_name
         description: "Denormalized from dim_products."
 
@@ -372,7 +359,7 @@ models:
         description: "Denormalized from dim_products."
 
       - name: cost_price
-        description: "Denormalized from dim_products. Unit cost used for inventory valuation."
+        description: "Unit cost used for inventory valuation."
 
       - name: store_name
         description: "Denormalized from dim_stores."
@@ -387,7 +374,7 @@ models:
         description: "Denormalized from dim_stores."
 
       - name: quantity_on_hand
-        description: "Current units in stock at this store for this product."
+        description: "Current units in stock."
         tests:
           - not_null
 
@@ -397,10 +384,10 @@ models:
           - not_null
 
       - name: below_reorder_flag
-        description: "Derived: 1 if quantity_on_hand < reorder_level, else 0."
+        description: "Derived: 1 if quantity_on_hand < reorder_level."
 
       - name: units_needed
-        description: "Derived: MAX(reorder_level - quantity_on_hand, 0). Units required to reach reorder level."
+        description: "Derived: MAX(reorder_level - quantity_on_hand, 0)."
 
       - name: inventory_value
-        description: "Derived: quantity_on_hand * cost_price. Total cost value of stock on hand."
+        description: "Derived: quantity_on_hand * cost_price."
