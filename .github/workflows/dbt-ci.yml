@@ -18,6 +18,20 @@ jobs:
   dbt-ci:
     name: Run dbt CI
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        ports:
+          - "5441:5432"
+        env:
+          POSTGRES_USER: ${{ secrets.DBT_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.DEV_DB_PASSWORD }}
+          POSTGRES_DB: retail_dev
+        options: >-
+          --health-cmd="pg_isready -U ${{ secrets.DBT_USER }}"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
 
     services:
       postgres:
