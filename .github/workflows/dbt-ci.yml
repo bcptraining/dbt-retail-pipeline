@@ -33,12 +33,34 @@ jobs:
           --health-timeout=5s
           --health-retries=5
 
+    services:
+      postgres:
+        image: postgres:15
+        ports:
+          - "5441:5432"
+        env:
+          POSTGRES_USER: ci_user
+          POSTGRES_PASSWORD: ci_password
+          POSTGRES_DB: retail_ci
+        options: >-
+          --health-cmd="pg_isready -U ci_user"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
     env:
+      # dbt profile directory
       DBT_PROFILES_DIR: .github/profiles
+
+      # real secrets for local/dev/qa/prod
       DBT_USER: ${{ secrets.DBT_USER }}
       DEV_DB_PASSWORD: ${{ secrets.DEV_DB_PASSWORD }}
       QA_DB_PASSWORD: ${{ secrets.QA_DB_PASSWORD }}
       PROD_DB_PASSWORD: ${{ secrets.PROD_DB_PASSWORD }}
+
+      # CI‑only Postgres credentials
+      CI_DB_USER: ci_user
+      CI_DB_PASSWORD: ci_password
 
     steps:
       - name: Checkout repository
