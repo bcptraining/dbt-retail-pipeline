@@ -161,13 +161,17 @@ docker compose up -d
 
 ### Configure credentials
 
-Copy the example profile and fill in passwords:
+**Local development** — copy the example profile to your personal dbt directory and set the required environment variables:
 
 ```bash
 cp profiles.yml.example ~/.dbt/profiles.yml
+export DBT_USER=<your_username>
+export DEV_DB_PASSWORD=<password>
 ```
 
-> `profiles.yml` is included in version control. Never include actual credentials.
+`~/.dbt/profiles.yml` lives outside the repository and is never committed.
+
+**CI/CD** — GitHub Actions uses `.github/profiles/profiles.yml`, which is committed to the repository. All passwords are injected at runtime from GitHub Secrets via dbt's `env_var()` function — no real credentials are stored in source control.
 
 ### Run the pipeline
 
@@ -195,7 +199,8 @@ dbt-retail-pipeline/
 ├── seeds/             # Source CSV data loaded into raw schema
 ├── macros/            # generate_schema_name, custom tests
 ├── .github/
-│   └── workflows/     # CI/CD: dbt build on develop (qa) and main (prod)
+│   ├── workflows/     # CI/CD: dbt build on develop (qa) and main (prod)
+│   └── profiles/      # profiles.yml used by CI (credentials via env_var)
 ├── docker-compose.yml # 3 PostgreSQL containers
 ├── profiles.yml.example
 └── dbt_project.yml
