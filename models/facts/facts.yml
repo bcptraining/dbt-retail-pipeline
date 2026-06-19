@@ -30,8 +30,9 @@ models:
               field: customer_id
 
       - name: product_id
-        description: "Foreign key to dim_products. The column is null when no product is viewed in the session"
+        description: "Foreign key to dim_products."
         tests:
+          - not_null
           - relationships:
               to: ref('dim_products')
               field: product_id
@@ -268,7 +269,7 @@ models:
               field: customer_id
 
       - name: product_id_viewed
-        description: "Foreign key to dim_products."
+        description: "Foreign key to dim_products.The column is null when no product is viewed in the session"
         tests:
           - relationships:
               to: ref('dim_products')
