@@ -65,6 +65,9 @@ jobs:
         with:
           script: "core.notice('dbt CI started for target: ${{ matrix.target }}')"
 
+      - name: Debug env
+        run: env | sort
+
       - name: Run dbt build
         run: |
           TARGET="${{ matrix.target }}"
