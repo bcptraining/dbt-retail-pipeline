@@ -63,7 +63,7 @@ jobs:
       - name: Initialize check run
         uses: actions/github-script@v7
         with:
-          script: core.notice('dbt CI started for target: ${{ matrix.target }}')
+          script: "core.notice('dbt CI started for target: ${{ matrix.target }}')"
 
       - name: Run dbt build
         run: |
