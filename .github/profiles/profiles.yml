@@ -7,6 +7,6 @@ dbt_retail_pipeline:
       port: 5441
       user: "{{ env_var('CI_DB_USER', env_var('DBT_USER')) }}"
       password: "{{ env_var('CI_DB_PASSWORD', env_var('DEV_DB_PASSWORD')) }}"
-      dbname: "retail_{{ target.name }}"
+      dbname: "{{ env_var('DB_NAME') }}"
       schema: "{{ env_var('DBT_USER') }}"
       threads: 4
