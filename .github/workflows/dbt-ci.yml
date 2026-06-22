@@ -60,11 +60,11 @@ jobs:
 
       - name: Install dbt packages 
         run: dbt deps
-
       - name: Initialize check run
         uses: actions/github-script@v7
         with:
           script: core.notice('dbt CI started for target: ${{ matrix.target }}')
+
       - name: Run dbt build
         run: |
           TARGET="${{ matrix.target }}"
@@ -83,13 +83,11 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: core.notice('dbt CI completed successfully for target: ${{ matrix.target }}')
-
       - name: Finalize check run (failure)
         if: ${{ failure() }}
         uses: actions/github-script@v7
         with:
           script: core.error('dbt CI failed for target: ${{ matrix.target }} — review logs')
-
       - name: Finalize check run (always)
         if: ${{ always() }}
         uses: actions/github-script@v7
