@@ -10,3 +10,12 @@ dbt_retail_pipeline:
       dbname: "{{ env_var('DB_NAME') }}"
       schema: "{{ env_var('DBT_USER') }}"
       threads: 4
+    qa:
+      type: postgres
+      host: localhost
+      port: 5441
+      user: "{{ env_var('CI_DB_USER', env_var('DBT_USER')) }}"
+      password: "{{ env_var('CI_DB_PASSWORD', env_var('QA_DB_PASSWORD')) }}"
+      dbname: "{{ env_var('DB_NAME') }}"
+      schema: "{{ env_var('DBT_USER') }}"
+      threads: 4
