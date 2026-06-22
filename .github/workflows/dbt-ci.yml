@@ -58,7 +58,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Install dbt packages
+      - name: Install dbt packages 
         run: dbt deps
 
       - name: Initialize check run
