@@ -1,6 +1,9 @@
 @echo off
 setlocal enabledelayedexpansion
 
+REM ---- Ensure script runs from its own directory ----
+pushd "%~dp0"
+
 REM =======================================
 REM Multi‑Environment dbt Build Script
 REM Usage:  run_dbt_build.bat dev
@@ -45,6 +48,14 @@ if not exist "logs" (
 
 set LOGFILE=logs\dbt_build_%ENV%_%YYYYMMDD%_%HHMM%.log
 
+REM ---- Retain only the most recent 5 log files per environment ----
+for /f "skip=5 delims=" %%F in (
+    'dir /b /a-d /o-d "logs\dbt_build_%ENV%_*.log" 2^>nul'
+) do (
+    echo Deleting old log: logs\%%F
+    del "logs\%%F"
+)
+
 echo =======================================
 echo Starting dbt build workflow...
 echo Environment: %ENV%
@@ -61,5 +72,5 @@ echo =======================================
 echo Build complete for environment: %ENV%
 echo Log saved to: %LOGFILE%
 echo =======================================
-
+popd
 endlocal & exit /b %DBT_EXIT_CODE%
