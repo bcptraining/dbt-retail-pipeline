@@ -92,16 +92,19 @@ This ensures complete isolation between developers working in parallel.
 
 ### CI workflow
 
-GitHub Actions uses:
+GitHub Actions runs a **matrix build** against both `dev` and `qa` targets in parallel (`fail-fast: false`):
 
-```bash
-DBT_USER=ci
-```
+| Target | Database     | Schemas created           | Artifact uploaded        |
+| ------ | ------------ | ------------------------- | ------------------------ |
+| `dev`  | `retail_dev` | `raw`, `staging`, `marts` | `dbt-log-dev`            |
+| `qa`   | `retail_qa`  | `raw`, `staging`, `marts` | `dbt-log-qa`             |
+
+The CI service container uses a dedicated `ci_user` / `ci_password` pair and creates a fresh `retail_<target>` database per job, so runs are fully isolated from each other and from developer builds.
 
 This ensures:
 
 - CI builds never collide with developer builds
-- CI has stable, predictable schemas: `ci_raw`, `ci_staging`, `ci_marts` in `retail_dev`
+- CI has stable, predictable schemas: `raw`, `staging`, `marts` in both `retail_dev` and `retail_qa`
 - PR validation is isolated and reproducible
 - No developer-specific assumptions leak into automated builds
 
@@ -115,17 +118,17 @@ feature/xyz ──► develop ──► main
 dev           qa        prod
 ```
 
-| Branch      | Target Environment | Trigger                                 |
-| ----------- | ------------------ | --------------------------------------- |
-| `feature/*` | dev                | Local dbt runs by the developer         |
-| `develop`   | qa                 | GitHub Actions on push/PR merge         |
-| `main`      | prod               | GitHub Actions on PR merge from develop |
+| Branch      | Target Environment | Trigger                                          |
+| ----------- | ------------------ | ------------------------------------------------ |
+| `feature/*` | dev                | Local dbt runs by the developer                  |
+| `develop`   | dev **and** qa     | GitHub Actions matrix CI on push/PR merge        |
+| `main`      | prod               | GitHub Actions on PR merge from develop          |
 
 ### Workflow
 
 1. Create a `feature/` branch from `develop` for all new work
 2. Run and test locally against the **dev** database
-3. Open a PR into `develop` — GitHub Actions runs `dbt build` against **qa**
+3. Open a PR into `develop` — GitHub Actions runs `dbt build` in a matrix against both **dev** and **qa** (with `fail-fast: false`, both targets always run independently)
 4. After QA passes, open a PR from `develop` into `main` — GitHub Actions runs `dbt build` against **prod**
 5. Direct commits to `main` are not permitted
 
@@ -140,7 +143,7 @@ dev           qa        prod
 | Docker Compose — 3 isolated PostgreSQL 15 servers                    | ✅ Complete    |
 | dbt profiles for dev / qa / prod                                     | ✅ Complete    |
 | `dbt debug` passing on all 3 targets                                 | ✅ Complete    |
-| GitHub Actions CI/CD workflows                                       | 🔜 In progress |
+| GitHub Actions CI/CD — matrix build (dev + qa)                      | ✅ Complete    |
 | Remaining dimension models (dim_customers, dim_products, dim_stores) | 🔜 Pending     |
 
 ---
@@ -199,7 +202,7 @@ dbt-retail-pipeline/
 ├── seeds/             # Source CSV data loaded into raw schema
 ├── macros/            # generate_schema_name, custom tests
 ├── .github/
-│   ├── workflows/     # CI/CD: dbt build on develop (qa) and main (prod)
+│   ├── workflows/     # CI/CD: matrix dbt build on develop (dev + qa) and main (prod)
 │   └── profiles/      # profiles.yml used by CI (credentials via env_var)
 ├── docker-compose.yml # 3 PostgreSQL containers
 ├── profiles.yml.example

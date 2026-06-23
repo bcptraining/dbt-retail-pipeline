@@ -6,32 +6,16 @@ on:
   pull_request:
     branches: [develop]
   workflow_dispatch:
-    inputs:
-      target_env:
-        description: "dbt target to run (manual only)"
-        required: true
-        default: "dev"
-        type: choice
-        options: [dev, qa]
 
 jobs:
   dbt-ci:
-    name: Run dbt CI
+    name: Run dbt CI (${{ matrix.target }})
     runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:15
-        ports:
-          - "5441:5432"
-        env:
-          POSTGRES_USER: ${{ secrets.DBT_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.DEV_DB_PASSWORD }}
-          POSTGRES_DB: retail_dev
-        options: >-
-          --health-cmd="pg_isready -U ${{ secrets.DBT_USER }}"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
+
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [dev, qa]
 
     services:
       postgres:
@@ -41,7 +25,7 @@ jobs:
         env:
           POSTGRES_USER: ci_user
           POSTGRES_PASSWORD: ci_password
-          POSTGRES_DB: retail_ci
+          POSTGRES_DB: retail_${{ matrix.target }}
         options: >-
           --health-cmd="pg_isready -U ci_user"
           --health-interval=10s
@@ -49,16 +33,12 @@ jobs:
           --health-retries=5
 
     env:
-      # dbt profile directory
       DBT_PROFILES_DIR: .github/profiles
-
-      # real secrets for local/dev/qa/prod
       DBT_USER: ${{ secrets.DBT_USER }}
       DEV_DB_PASSWORD: ${{ secrets.DEV_DB_PASSWORD }}
       QA_DB_PASSWORD: ${{ secrets.QA_DB_PASSWORD }}
       PROD_DB_PASSWORD: ${{ secrets.PROD_DB_PASSWORD }}
-
-      # CI‑only Postgres credentials
+      DB_NAME: retail_${{ matrix.target }}
       CI_DB_USER: ci_user
       CI_DB_PASSWORD: ci_password
 
@@ -79,45 +59,39 @@ jobs:
 
       - name: Install dbt packages
         run: dbt deps
-
       - name: Initialize check run
         uses: actions/github-script@v7
         with:
-          script: core.notice('dbt CI started')
+          script: "core.notice('dbt CI started for target: ${{ matrix.target }}')"
+
+      - name: Debug env
+        run: env | sort
 
       - name: Run dbt build
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            TARGET="${{ github.event.inputs.target_env }}"
-          else
-            TARGET="dev"
-          fi
-
+          TARGET="${{ matrix.target }}"
           echo "Running dbt build with target: \"$TARGET\""
-
           set -o pipefail
-          dbt build --profiles-dir "${{ github.workspace }}/.github/profiles" --target "$TARGET" | tee dbt_output.log
+          dbt build --profiles-dir "${{ github.workspace }}/.github/profiles" --target "$TARGET" | tee dbt_output_${{ matrix.target }}.log
 
       - name: Upload dbt log
         uses: actions/upload-artifact@v4
         with:
-          name: dbt-log
-          path: dbt_output.log
+          name: dbt-log-${{ matrix.target }}
+          path: dbt_output_${{ matrix.target }}.log
 
       - name: Finalize check run (success)
         if: ${{ success() }}
         uses: actions/github-script@v7
         with:
-          script: core.notice('dbt CI completed successfully')
-
+          script: "core.notice('dbt CI completed successfully for target: ${{ matrix.target }}')"
       - name: Finalize check run (failure)
         if: ${{ failure() }}
         uses: actions/github-script@v7
         with:
-          script: core.error('dbt CI failed — review logs for details')
-
+          script: "core.error('dbt CI failed for target: ${{ matrix.target }} — review logs')"
       - name: Finalize check run (always)
         if: ${{ always() }}
         uses: actions/github-script@v7
         with:
-          script: core.info('dbt CI workflow finished')
+          script: "core.info('dbt CI workflow finished for target: ${{ matrix.target }}')"
