@@ -1,6 +1,6 @@
 @echo off
 setlocal enabledelayedexpansion
-s 
+
 REM ---- Ensure script runs from its own directory ----
 pushd "%~dp0"
 
@@ -68,12 +68,9 @@ dbt build --target %ENV% > "%LOGFILE%" 2>&1
 REM ---- Capture dbt exit code before endlocal ----
 set "DBT_EXIT_CODE=%ERRORLEVEL%"
 
-REM ---- Restore the caller's working directory ----
-popd
-
 echo =======================================
 echo Build complete for environment: %ENV%
 echo Log saved to: %LOGFILE%
 echo =======================================
-
+popd
 endlocal & exit /b %DBT_EXIT_CODE%
