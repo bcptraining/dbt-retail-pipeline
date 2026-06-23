@@ -94,10 +94,10 @@ This ensures complete isolation between developers working in parallel.
 
 GitHub Actions runs a **matrix build** against both `dev` and `qa` targets in parallel (`fail-fast: false`):
 
-| Target | Database     | Schemas created           | Artifact uploaded        |
-| ------ | ------------ | ------------------------- | ------------------------ |
-| `dev`  | `retail_dev` | `raw`, `staging`, `marts` | `dbt-log-dev`            |
-| `qa`   | `retail_qa`  | `raw`, `staging`, `marts` | `dbt-log-qa`             |
+| Target | Database     | Schemas created           | Artifact uploaded |
+| ------ | ------------ | ------------------------- | ----------------- |
+| `dev`  | `retail_dev` | `raw`, `staging`, `marts` | `dbt-log-dev`     |
+| `qa`   | `retail_qa`  | `raw`, `staging`, `marts` | `dbt-log-qa`      |
 
 The CI service container uses a dedicated `ci_user` / `ci_password` pair and creates a fresh `retail_<target>` database per job, so runs are fully isolated from each other and from developer builds.
 
@@ -118,11 +118,11 @@ feature/xyz ──► develop ──► main
 dev           qa        prod
 ```
 
-| Branch      | Target Environment | Trigger                                          |
-| ----------- | ------------------ | ------------------------------------------------ |
-| `feature/*` | dev                | Local dbt runs by the developer                  |
-| `develop`   | dev **and** qa     | GitHub Actions matrix CI on push/PR merge        |
-| `main`      | prod               | GitHub Actions on PR merge from develop          |
+| Branch      | Target Environment | Trigger                                   |
+| ----------- | ------------------ | ----------------------------------------- |
+| `feature/*` | dev                | Local dbt runs by the developer           |
+| `develop`   | dev **and** qa     | GitHub Actions matrix CI on push/PR merge |
+| `main`      | prod               | GitHub Actions on PR merge from develop   |
 
 ### Workflow
 
@@ -136,15 +136,15 @@ dev           qa        prod
 
 ## Current Build Status
 
-| Component                                                            | Status         |
-| -------------------------------------------------------------------- | -------------- |
-| Project scaffold (seeds, staging, facts, dimensions)                 | ✅ Complete    |
-| Git repo with `main` / `develop` branch strategy                     | ✅ Complete    |
-| Docker Compose — 3 isolated PostgreSQL 15 servers                    | ✅ Complete    |
-| dbt profiles for dev / qa / prod                                     | ✅ Complete    |
-| `dbt debug` passing on all 3 targets                                 | ✅ Complete    |
-| GitHub Actions CI/CD — matrix build (dev + qa)                      | ✅ Complete    |
-| Remaining dimension models (dim_customers, dim_products, dim_stores) | 🔜 Pending     |
+| Component                                                            | Status      |
+| -------------------------------------------------------------------- | ----------- |
+| Project scaffold (seeds, staging, facts, dimensions)                 | ✅ Complete |
+| Git repo with `main` / `develop` branch strategy                     | ✅ Complete |
+| Docker Compose — 3 isolated PostgreSQL 15 servers                    | ✅ Complete |
+| dbt profiles for dev / qa / prod                                     | ✅ Complete |
+| `dbt debug` passing on all 3 targets                                 | ✅ Complete |
+| GitHub Actions CI/CD — matrix build (dev + qa)                       | ✅ Complete |
+| Remaining dimension models (dim_customers, dim_products, dim_stores) | 🔜 Pending  |
 
 ---
 
