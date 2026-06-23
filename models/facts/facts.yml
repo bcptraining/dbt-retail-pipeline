@@ -28,7 +28,6 @@ models:
           - relationships:
               to: ref('dim_customers')
               field: customer_id
-
       - name: product_id
         description: "Foreign key to dim_products."
         tests:
@@ -36,7 +35,6 @@ models:
           - relationships:
               to: ref('dim_products')
               field: product_id
-
       - name: store_id
         description: "Foreign key to dim_stores."
         tests:
@@ -44,7 +42,6 @@ models:
           - relationships:
               to: ref('dim_stores')
               field: store_id
-
       - name: date_key
         description: "Order date. Foreign key to dim_date."
         tests:
@@ -52,7 +49,6 @@ models:
           - relationships:
               to: ref('dim_date')
               field: date_key
-
       - name: order_year
         description: "Derived from order_date. Extracted year of the order."
 
@@ -131,7 +127,6 @@ models:
           - relationships:
               to: ref('dim_customers')
               field: customer_id
-
       - name: store_id
         description: "Foreign key to dim_stores."
         tests:
@@ -139,7 +134,6 @@ models:
           - relationships:
               to: ref('dim_stores')
               field: store_id
-
       - name: date_key
         description: "Order date. Foreign key to dim_date."
         tests:
@@ -147,7 +141,6 @@ models:
           - relationships:
               to: ref('dim_date')
               field: date_key
-
       - name: order_status
         description: "Fulfillment status."
 
@@ -204,7 +197,6 @@ models:
           - relationships:
               to: ref('fct_orders')
               field: order_id
-
       - name: customer_id
         description: "Foreign key to dim_customers."
         tests:
@@ -212,7 +204,6 @@ models:
           - relationships:
               to: ref('dim_customers')
               field: customer_id
-
       - name: store_id
         description: "Foreign key to dim_stores."
         tests:
@@ -220,7 +211,6 @@ models:
           - relationships:
               to: ref('dim_stores')
               field: store_id
-
       - name: date_key
         description: "Payment date. Foreign key to dim_date."
         tests:
@@ -228,7 +218,6 @@ models:
           - relationships:
               to: ref('dim_date')
               field: date_key
-
       - name: payment_method
         description: "Payment method."
 
@@ -267,14 +256,12 @@ models:
           - relationships:
               to: ref('dim_customers')
               field: customer_id
-
       - name: product_id_viewed
         description: "Foreign key to dim_products.The column is null when no product is viewed in the session"
         tests:
           - relationships:
               to: ref('dim_products')
               field: product_id
-
       - name: date_key
         description: "Session date. Foreign key to dim_date."
         tests:
@@ -282,7 +269,6 @@ models:
           - relationships:
               to: ref('dim_date')
               field: date_key
-
       - name: channel
         description: "Marketing channel."
 
@@ -329,7 +315,6 @@ models:
           - relationships:
               to: ref('dim_products')
               field: product_id
-
       - name: store_id
         description: "Foreign key to dim_stores."
         tests:
@@ -337,7 +322,6 @@ models:
           - relationships:
               to: ref('dim_stores')
               field: store_id
-
       - name: date_key
         description: "Restock date. Foreign key to dim_date."
         tests:
@@ -345,7 +329,6 @@ models:
           - relationships:
               to: ref('dim_date')
               field: date_key
-
       - name: product_name
         description: "Denormalized from dim_products."
 
